@@ -1,245 +1,63 @@
 <template>
-  <Panel
-    class="actionbar w-fit"
-    :style="style"
-    :class="{ 'is-dragging': isDragging, 'is-docked': isDocked }"
-  >
-    <div ref="panelRef" class="actionbar-content flex items-center select-none">
-      <span ref="dragHandleRef" class="drag-handle cursor-move mr-2 p-0!" />
-      <ComfyQueueButton />
-    </div>
-  </Panel>
+  <div class="actionbar w-fit">
+    <Button
+      severity="success"
+      class="comfyui-queue-button"
+      data-testid="queue-button"
+      :label="btnLabel"
+      @click="btnClick"
+    >
+      <template #icon>
+        <i-lucide:circle-pause v-if="isExecutingPrompt" />
+      </template>
+    </Button>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import {
-  useDraggable,
-  useElementBounding,
-  useEventBus,
-  useEventListener,
-  useLocalStorage,
-  watchDebounced
-} from '@vueuse/core'
-import { clamp } from 'lodash'
-import Panel from 'primevue/panel'
-import { Ref, computed, inject, nextTick, onMounted, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import Button from 'primevue/button'
+import { computed } from 'vue'
 
-import { useSettingStore } from '@/stores/settingStore'
+import { useCommandStore } from '@/stores/commandStore'
+import { useQueuePendingTaskCountStore } from '@/stores/queueStore'
 
-import ComfyQueueButton from './ComfyQueueButton.vue'
+const queueCountStore = storeToRefs(useQueuePendingTaskCountStore())
 
-const settingsStore = useSettingStore()
+const isExecutingPrompt = computed(() => !!queueCountStore.count.value)
+const hasQueuePendingTasks = computed(() => queueCountStore.count.value > 1)
 
-const visible = computed(
-  () => settingsStore.get('Comfy.UseNewMenu') !== 'Disabled'
-)
-
-const panelRef = ref<HTMLElement | null>(null)
-const dragHandleRef = ref<HTMLElement | null>(null)
-const isDocked = useLocalStorage('Comfy.MenuPosition.Docked', false)
-const storedPosition = useLocalStorage('Comfy.MenuPosition.Floating', {
-  x: 0,
-  y: 0
-})
-const {
-  x,
-  y,
-  style: style,
-  isDragging
-} = useDraggable(panelRef, {
-  initialValue: { x: 0, y: 0 },
-  handle: dragHandleRef,
-  containerElement: document.body
+const btnLabel = computed(() => {
+  if (hasQueuePendingTasks.value) {
+    return `正在排队中(${queueCountStore.count.value})人`
+  } else if (isExecutingPrompt.value) {
+    return '中止'
+  }
+  return '开始生图'
 })
 
-// Update storedPosition when x or y changes
-watchDebounced(
-  [x, y],
-  ([newX, newY]) => {
-    storedPosition.value = { x: newX, y: newY }
-  },
-  { debounce: 300 }
-)
+const commandStore = useCommandStore()
+const btnClick = async () => {
+  const command = hasQueuePendingTasks.value
+    ? 'Comfy.ClearPendingTasks'
+    : isExecutingPrompt.value
+      ? 'Comfy.Interrupt'
+      : 'Comfy.QueuePrompt'
 
-// Set initial position to bottom center
-const setInitialPosition = () => {
-  if (x.value !== 0 || y.value !== 0) {
-    return
-  }
-  if (storedPosition.value.x !== 0 || storedPosition.value.y !== 0) {
-    x.value = storedPosition.value.x
-    y.value = storedPosition.value.y
-    captureLastDragState()
-    return
-  }
-  if (panelRef.value) {
-    const screenWidth = window.innerWidth
-    const screenHeight = window.innerHeight
-    const menuWidth = panelRef.value.offsetWidth
-    const menuHeight = panelRef.value.offsetHeight
-
-    if (menuWidth === 0 || menuHeight === 0) {
-      return
-    }
-
-    x.value = (screenWidth - menuWidth) / 2
-    y.value = screenHeight - menuHeight - 10 // 10px margin from bottom
-    captureLastDragState()
-  }
+  await commandStore.execute(command)
 }
-onMounted(setInitialPosition)
-watch(visible, async (newVisible) => {
-  if (newVisible) {
-    await nextTick(setInitialPosition)
-  }
-})
-
-const lastDragState = ref({
-  x: x.value,
-  y: y.value,
-  windowWidth: window.innerWidth,
-  windowHeight: window.innerHeight
-})
-const captureLastDragState = () => {
-  lastDragState.value = {
-    x: x.value,
-    y: y.value,
-    windowWidth: window.innerWidth,
-    windowHeight: window.innerHeight
-  }
-}
-watch(
-  isDragging,
-  (newIsDragging) => {
-    if (!newIsDragging) {
-      // Stop dragging
-      captureLastDragState()
-    }
-  },
-  { immediate: true }
-)
-
-const adjustMenuPosition = () => {
-  if (panelRef.value) {
-    const screenWidth = window.innerWidth
-    const screenHeight = window.innerHeight
-    const menuWidth = panelRef.value.offsetWidth
-    const menuHeight = panelRef.value.offsetHeight
-
-    // Calculate distances to all edges
-    const distanceLeft = lastDragState.value.x
-    const distanceRight =
-      lastDragState.value.windowWidth - (lastDragState.value.x + menuWidth)
-    const distanceTop = lastDragState.value.y
-    const distanceBottom =
-      lastDragState.value.windowHeight - (lastDragState.value.y + menuHeight)
-
-    // Find the smallest distance to determine which edge to anchor to
-    const distances = [
-      { edge: 'left', distance: distanceLeft },
-      { edge: 'right', distance: distanceRight },
-      { edge: 'top', distance: distanceTop },
-      { edge: 'bottom', distance: distanceBottom }
-    ]
-    const closestEdge = distances.reduce((min, curr) =>
-      curr.distance < min.distance ? curr : min
-    )
-
-    // Calculate vertical position as a percentage of screen height
-    const verticalRatio =
-      lastDragState.value.y / lastDragState.value.windowHeight
-    const horizontalRatio =
-      lastDragState.value.x / lastDragState.value.windowWidth
-
-    // Apply positioning based on closest edge
-    if (closestEdge.edge === 'left') {
-      x.value = closestEdge.distance // Maintain exact distance from left
-      y.value = verticalRatio * screenHeight
-    } else if (closestEdge.edge === 'right') {
-      x.value = screenWidth - menuWidth - closestEdge.distance // Maintain exact distance from right
-      y.value = verticalRatio * screenHeight
-    } else if (closestEdge.edge === 'top') {
-      x.value = horizontalRatio * screenWidth
-      y.value = closestEdge.distance // Maintain exact distance from top
-    } else {
-      // bottom
-      x.value = horizontalRatio * screenWidth
-      y.value = screenHeight - menuHeight - closestEdge.distance // Maintain exact distance from bottom
-    }
-
-    // Ensure the menu stays within the screen bounds
-    x.value = clamp(x.value, 0, screenWidth - menuWidth)
-    y.value = clamp(y.value, 0, screenHeight - menuHeight)
-  }
-}
-
-useEventListener(window, 'resize', adjustMenuPosition)
-
-const topMenuRef = inject<Ref<HTMLDivElement | null>>('topMenuRef')
-const topMenuBounds = useElementBounding(topMenuRef)
-const overlapThreshold = 20 // pixels
-const isOverlappingWithTopMenu = computed(() => {
-  if (!panelRef.value) {
-    return false
-  }
-  const { height } = panelRef.value.getBoundingClientRect()
-  const actionbarBottom = y.value + height
-  const topMenuBottom = topMenuBounds.bottom.value
-
-  const overlapPixels =
-    Math.min(actionbarBottom, topMenuBottom) -
-    Math.max(y.value, topMenuBounds.top.value)
-  return overlapPixels > overlapThreshold
-})
-
-watch(isDragging, (newIsDragging) => {
-  if (!newIsDragging) {
-    // Stop dragging
-    isDocked.value = isOverlappingWithTopMenu.value
-  } else {
-    // Start dragging
-    isDocked.value = false
-  }
-})
-
-const eventBus = useEventBus<string>('topMenu')
-watch([isDragging, isOverlappingWithTopMenu], ([dragging, overlapping]) => {
-  eventBus.emit('updateHighlight', {
-    isDragging: dragging,
-    isOverlapping: overlapping
-  })
-})
 </script>
 
 <style scoped>
 .actionbar {
-  pointer-events: all;
-  position: fixed;
-  z-index: 1000;
-}
-
-.actionbar.is-docked {
-  position: static;
-  @apply bg-transparent border-none p-0;
-}
-
-.actionbar.is-dragging {
-  user-select: none;
-}
-
-:deep(.p-panel-content) {
-  @apply p-1;
-}
-
-.is-docked :deep(.p-panel-content) {
-  @apply p-0;
-}
-
-:deep(.p-panel-header) {
-  display: none;
-}
-
-.drag-handle {
-  @apply w-3 h-max;
+  .comfyui-queue-button {
+    width: 160px;
+    font-size: 16px;
+    --p-button-border-radius: 4px;
+    font-family: 'Microsoft YaHei UI';
+    --p-button-label-font-weight: 400;
+    --p-button-success-color: #222722;
+    --p-button-success-background: #43ff32;
+  }
 }
 </style>

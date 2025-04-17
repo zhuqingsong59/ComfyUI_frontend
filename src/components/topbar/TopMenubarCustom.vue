@@ -3,9 +3,7 @@
     v-show="showTopMenu"
     ref="topMenuRef"
     class="comfyui-menu flex items-center"
-    :class="{ dropzone: isDropZone, 'dropzone-active': isDroppable }"
   >
-    <h1 class="comfyui-logo mx-2 app-drag">11</h1>
     <CommandMenubar />
     <div class="flex-grow min-w-0 app-drag h-full"></div>
     <div ref="menuRight" class="comfyui-menu-right flex-shrink-0" />
@@ -24,11 +22,10 @@
 </template>
 
 <script setup lang="ts">
-import { useEventBus } from '@vueuse/core'
-import { computed, onMounted, provide, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
-import Actionbar from '@/components/actionbar/ComfyActionbar.vue'
-import CommandMenubar from '@/components/topbar/CommandMenubar.vue'
+import Actionbar from '@/components/actionbar/ComfyActionbarCustom.vue'
+import CommandMenubar from '@/components/topbar/CommandMenubarCustom.vue'
 import { app } from '@/scripts/app'
 import { useSettingStore } from '@/stores/settingStore'
 import { electronAPI, isElectron, isNativeWindow } from '@/utils/envUtil'
@@ -48,16 +45,6 @@ onMounted(() => {
 })
 
 const topMenuRef = ref<HTMLDivElement | null>(null)
-provide('topMenuRef', topMenuRef)
-const eventBus = useEventBus<string>('topMenu')
-const isDropZone = ref(false)
-const isDroppable = ref(false)
-eventBus.on((event: string, payload: any) => {
-  if (event === 'updateHighlight') {
-    isDropZone.value = payload.isDragging
-    isDroppable.value = payload.isOverlapping && payload.isDragging
-  }
-})
 
 onMounted(() => {
   if (isElectron()) {
@@ -71,6 +58,7 @@ onMounted(() => {
 <style scoped>
 .comfyui-menu {
   width: 100vw;
+  padding: 0 24px;
   --comfy-topbar-height: 4rem;
   height: var(--comfy-topbar-height);
   background: var(--comfy-menu-bg);
@@ -84,21 +72,7 @@ onMounted(() => {
   grid-column: 1/-1;
 }
 
-.comfyui-menu.dropzone {
-  background: var(--p-highlight-background);
-}
-
-.comfyui-menu.dropzone-active {
-  background: var(--p-highlight-background-focus);
-}
-
 :deep(.p-menubar-item-label) {
   line-height: revert;
-}
-
-.comfyui-logo {
-  font-size: 1.2em;
-  user-select: none;
-  cursor: default;
 }
 </style>
