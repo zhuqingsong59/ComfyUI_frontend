@@ -1,11 +1,9 @@
 <template>
   <div class="comfyui-body grid h-screen w-screen overflow-hidden">
     <div id="comfyui-body-top" class="comfyui-body-top">
-      <TopMenubar v-if="useNewMenu === 'Top'" />
+      <TopMenubar />
     </div>
-    <div id="comfyui-body-bottom" class="comfyui-body-bottom">
-      <TopMenubar v-if="useNewMenu === 'Bottom'" />
-    </div>
+    <div id="comfyui-body-bottom" class="comfyui-body-bottom"></div>
     <div id="comfyui-body-left" class="comfyui-body-left" />
     <div id="comfyui-body-right" class="comfyui-body-right" />
     <div id="graph-canvas-container" class="graph-canvas-container">
@@ -33,7 +31,7 @@ import UnloadWindowConfirmDialog from '@/components/dialog/UnloadWindowConfirmDi
 import GraphCanvas from '@/components/graph/GraphCanvas.vue'
 import GlobalToast from '@/components/toast/GlobalToast.vue'
 import RerouteMigrationToast from '@/components/toast/RerouteMigrationToast.vue'
-import TopMenubar from '@/components/topbar/TopMenubar.vue'
+import TopMenubar from '@/components/topbar/TopMenubarCustom.vue'
 import { useCoreCommands } from '@/composables/useCoreCommands'
 import { useErrorHandling } from '@/composables/useErrorHandling'
 import { SERVER_CONFIG_ITEMS } from '@/constants/serverConfig'
