@@ -41,7 +41,8 @@ const router = createRouter({
         {
           path: '',
           name: 'GraphView',
-          component: () => import('@/views/GraphView.vue'),
+          // component: () => import('@/views/GraphView.vue'),
+          component: () => import('@/views/GraphViewCustom.vue'),
           beforeEnter: async (_to, _from, next) => {
             const userStore = useUserStore()
             await userStore.initialize()
