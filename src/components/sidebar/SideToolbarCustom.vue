@@ -1,6 +1,6 @@
 <template>
-  <teleport :to="teleportTarget">
-    <nav class="side-tool-bar-container" :class="{ 'small-sidebar': isSmall }">
+  <teleport :to="'.comfyui-body-left'">
+    <nav class="side-tool-bar-container">
       <SidebarIcon
         v-for="tab in tabs"
         :key="tab.id"
@@ -31,7 +31,6 @@ import { computed } from 'vue'
 
 import ExtensionSlot from '@/components/common/ExtensionSlot.vue'
 import { useKeybindingStore } from '@/stores/keybindingStore'
-import { useSettingStore } from '@/stores/settingStore'
 import { useUserStore } from '@/stores/userStore'
 import { useWorkspaceStore } from '@/stores/workspaceStore'
 import type { SidebarTabExtension } from '@/types/extensionTypes'
@@ -42,20 +41,10 @@ import SidebarSettingsToggleIcon from './SidebarSettingsToggleIcon.vue'
 import SidebarThemeToggleIcon from './SidebarThemeToggleIcon.vue'
 
 const workspaceStore = useWorkspaceStore()
-const settingStore = useSettingStore()
 const userStore = useUserStore()
 
-const teleportTarget = computed(() =>
-  settingStore.get('Comfy.Sidebar.Location') === 'left'
-    ? '.comfyui-body-left'
-    : '.comfyui-body-right'
-)
-
-const isSmall = computed(
-  () => settingStore.get('Comfy.Sidebar.Size') === 'small'
-)
-
 const tabs = computed(() => workspaceStore.getSidebarTabs())
+console.log('tabs: ', tabs)
 const selectedTab = computed(() => workspaceStore.sidebarTab.activeSidebarTab)
 const onTabClick = (item: SidebarTabExtension) => {
   workspaceStore.sidebarTab.toggleSidebarTab(item.id)
