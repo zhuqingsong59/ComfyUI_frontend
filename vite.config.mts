@@ -126,6 +126,9 @@ export default defineConfig({
       '/workflow_templates': {
         target: DEV_SERVER_COMFYUI_URL
       },
+      '/templates': {
+        target: DEV_SERVER_COMFYUI_URL
+      },
 
       '/testsubrouteindex': {
         target: 'http://localhost:5173',
