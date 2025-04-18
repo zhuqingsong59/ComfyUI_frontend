@@ -6,6 +6,7 @@
     :state-key="activeSidebarTabId ?? undefined"
     state-storage="local"
   >
+    <!-- 左侧菜单展开区域 -->
     <SplitterPanel
       v-show="sidebarPanelVisible"
       v-if="sidebarLocation === 'left'"
@@ -15,7 +16,7 @@
     >
       <slot name="side-bar-panel" />
     </SplitterPanel>
-
+    <!-- 剩余区域 -->
     <SplitterPanel :size="100">
       <Splitter
         class="splitter-overlay max-w-full"
@@ -52,7 +53,7 @@ import { computed } from 'vue'
 
 import { useSettingStore } from '@/stores/settingStore'
 import { useBottomPanelStore } from '@/stores/workspace/bottomPanelStore'
-import { useSidebarTabStore } from '@/stores/workspace/sidebarTabStore'
+import { useSidebarTabStore } from '@/stores/workspace/sidebarTabCustomStore'
 
 const settingStore = useSettingStore()
 const sidebarLocation = computed<'left' | 'right'>(() =>

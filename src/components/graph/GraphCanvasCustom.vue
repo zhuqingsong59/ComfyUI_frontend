@@ -40,7 +40,7 @@
 import type { LGraphNode } from '@comfyorg/litegraph'
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 
-import LiteGraphCanvasSplitterOverlay from '@/components/LiteGraphCanvasSplitterOverlay.vue'
+import LiteGraphCanvasSplitterOverlay from '@/components/LiteGraphCanvasSplitterOverlayCustom.vue'
 import BottomPanel from '@/components/bottomPanel/BottomPanel.vue'
 import DomWidgets from '@/components/graph/DomWidgets.vue'
 import GraphCanvasMenu from '@/components/graph/GraphCanvasMenu.vue'
