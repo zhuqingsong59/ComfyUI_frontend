@@ -32,7 +32,7 @@ import { computed } from 'vue'
 import ExtensionSlot from '@/components/common/ExtensionSlot.vue'
 import { useKeybindingStore } from '@/stores/keybindingStore'
 import { useUserStore } from '@/stores/userStore'
-import { useWorkspaceStore } from '@/stores/workspaceStore'
+import { useSidebarTabStore } from '@/stores/workspace/sidebarTabCustomStore'
 import type { SidebarTabExtension } from '@/types/extensionTypes'
 
 import SidebarIcon from './SidebarIcon.vue'
@@ -40,14 +40,13 @@ import SidebarLogoutIcon from './SidebarLogoutIcon.vue'
 import SidebarSettingsToggleIcon from './SidebarSettingsToggleIcon.vue'
 import SidebarThemeToggleIcon from './SidebarThemeToggleIcon.vue'
 
-const workspaceStore = useWorkspaceStore()
 const userStore = useUserStore()
+const sidebarTabStore = useSidebarTabStore()
 
-const tabs = computed(() => workspaceStore.getSidebarTabs())
-console.log('tabs: ', tabs)
-const selectedTab = computed(() => workspaceStore.sidebarTab.activeSidebarTab)
+const tabs = computed(() => sidebarTabStore.sidebarTabs)
+const selectedTab = computed(() => sidebarTabStore.activeSidebarTab)
 const onTabClick = (item: SidebarTabExtension) => {
-  workspaceStore.sidebarTab.toggleSidebarTab(item.id)
+  sidebarTabStore.toggleSidebarTab(item.id)
 }
 const keybindingStore = useKeybindingStore()
 const getTabTooltipSuffix = (tab: SidebarTabExtension) => {
