@@ -30,18 +30,18 @@ export const CORE_KEYBINDINGS: Keybinding[] = [
     },
     commandId: 'Comfy.RefreshNodeDefinitions'
   },
-  {
-    combo: {
-      key: 'q'
-    },
-    commandId: 'Workspace.ToggleSidebarTab.queue'
-  },
-  {
-    combo: {
-      key: 'w'
-    },
-    commandId: 'Workspace.ToggleSidebarTab.workflows'
-  },
+  // {
+  //   combo: {
+  //     key: 'q'
+  //   },
+  //   commandId: 'Workspace.ToggleSidebarTab.queue'
+  // },
+  // {
+  //   combo: {
+  //     key: 'w'
+  //   },
+  //   commandId: 'Workspace.ToggleSidebarTab.workflows'
+  // },
   {
     combo: {
       key: 'n'

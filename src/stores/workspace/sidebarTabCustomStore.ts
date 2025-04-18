@@ -55,9 +55,10 @@ export const useSidebarTabStore = defineStore('sidebarTabCustom', () => {
    * Register the core sidebar tabs.
    */
   const registerCoreSidebarTabs = () => {
-    registerSidebarTab(useQueueSidebarTab())
     registerSidebarTab(useNodeLibrarySidebarTab())
     registerSidebarTab(useModelLibrarySidebarTab())
+    // 待删除
+    registerSidebarTab(useQueueSidebarTab())
     registerSidebarTab(useWorkflowsSidebarTab())
   }
 

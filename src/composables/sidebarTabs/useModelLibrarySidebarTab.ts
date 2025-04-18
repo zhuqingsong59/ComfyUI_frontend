@@ -11,7 +11,7 @@ export const useModelLibrarySidebarTab = (): SidebarTabExtension => {
 
   return {
     id: 'model-library',
-    icon: 'pi pi-box',
+    icon: 'pi pi-sitemap',
     title: t('sideToolbar.modelLibrary'),
     tooltip: t('sideToolbar.modelLibrary'),
     component: markRaw(ModelLibrarySidebarTab),
