@@ -12,9 +12,7 @@
         @click="onTabClick(tab)"
       />
       <div class="side-tool-bar-end">
-        <SidebarLogoutIcon v-if="userStore.isMultiUserServer" />
-        <SidebarThemeToggleIcon />
-        <SidebarSettingsToggleIcon />
+        <SidebarSettingsToggleIcon style="display: none" />
       </div>
     </nav>
   </teleport>
@@ -31,16 +29,12 @@ import { computed } from 'vue'
 
 import ExtensionSlot from '@/components/common/ExtensionSlot.vue'
 import { useKeybindingStore } from '@/stores/keybindingStore'
-import { useUserStore } from '@/stores/userStore'
 import { useSidebarTabStore } from '@/stores/workspace/sidebarTabCustomStore'
 import type { SidebarTabExtension } from '@/types/extensionTypes'
 
 import SidebarIcon from './SidebarIcon.vue'
-import SidebarLogoutIcon from './SidebarLogoutIcon.vue'
 import SidebarSettingsToggleIcon from './SidebarSettingsToggleIcon.vue'
-import SidebarThemeToggleIcon from './SidebarThemeToggleIcon.vue'
 
-const userStore = useUserStore()
 const sidebarTabStore = useSidebarTabStore()
 
 const tabs = computed(() => sidebarTabStore.sidebarTabs)
