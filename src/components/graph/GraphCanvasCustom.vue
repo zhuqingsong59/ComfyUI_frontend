@@ -12,10 +12,12 @@
       <BottomPanel />
     </template>
     <template #graph-canvas-panel>
+      <!-- 工作流tab -->
       <SecondRowWorkflowTabs
         v-if="workflowTabsPosition === 'Topbar (2nd-row)'"
         class="pointer-events-auto"
       />
+      <!-- 画布内部菜单，放大，缩小等 -->
       <GraphCanvasMenu v-if="canvasMenuEnabled" class="pointer-events-auto" />
     </template>
   </LiteGraphCanvasSplitterOverlay>
@@ -85,6 +87,7 @@ const nodeDefStore = useNodeDefStore()
 const workspaceStore = useWorkspaceStore()
 const canvasStore = useCanvasStore()
 const executionStore = useExecutionStore()
+// 使用最新的菜单
 const betaMenuEnabled = computed(
   () => settingStore.get('Comfy.UseNewMenu') !== 'Disabled'
 )

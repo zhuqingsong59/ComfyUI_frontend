@@ -9,7 +9,6 @@
     <!-- 左侧菜单展开区域 -->
     <SplitterPanel
       v-show="sidebarPanelVisible"
-      v-if="sidebarLocation === 'left'"
       class="side-bar-panel"
       :min-size="10"
       :size="20"
@@ -33,16 +32,6 @@
         </SplitterPanel>
       </Splitter>
     </SplitterPanel>
-
-    <SplitterPanel
-      v-show="sidebarPanelVisible"
-      v-if="sidebarLocation === 'right'"
-      class="side-bar-panel"
-      :min-size="10"
-      :size="20"
-    >
-      <slot name="side-bar-panel" />
-    </SplitterPanel>
   </Splitter>
 </template>
 
@@ -51,14 +40,8 @@ import Splitter from 'primevue/splitter'
 import SplitterPanel from 'primevue/splitterpanel'
 import { computed } from 'vue'
 
-import { useSettingStore } from '@/stores/settingStore'
 import { useBottomPanelStore } from '@/stores/workspace/bottomPanelStore'
 import { useSidebarTabStore } from '@/stores/workspace/sidebarTabCustomStore'
-
-const settingStore = useSettingStore()
-const sidebarLocation = computed<'left' | 'right'>(() =>
-  settingStore.get('Comfy.Sidebar.Location')
-)
 
 const sidebarPanelVisible = computed(
   () => useSidebarTabStore().activeSidebarTab !== null
