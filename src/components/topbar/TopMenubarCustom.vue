@@ -4,8 +4,11 @@
     ref="topMenuRef"
     class="comfyui-menu flex items-center"
   >
+    <CommandMenubarCustom />
     <CommandMenubar />
-    <div class="flex-grow min-w-0 app-drag h-full"></div>
+    <div class="flex-grow min-w-0 app-drag h-full">
+      <div style="width: 100%; text-align: center">中间区域</div>
+    </div>
     <div ref="menuRight" class="comfyui-menu-right flex-shrink-0" />
     <Actionbar />
     <div
@@ -25,7 +28,8 @@
 import { computed, onMounted, ref } from 'vue'
 
 import Actionbar from '@/components/actionbar/ComfyActionbarCustom.vue'
-import CommandMenubar from '@/components/topbar/CommandMenubarCustom.vue'
+import CommandMenubar from '@/components/topbar/CommandMenubar.vue'
+import CommandMenubarCustom from '@/components/topbar/CommandMenubarCustom.vue'
 import { app } from '@/scripts/app'
 import { useSettingStore } from '@/stores/settingStore'
 import { electronAPI, isElectron, isNativeWindow } from '@/utils/envUtil'
