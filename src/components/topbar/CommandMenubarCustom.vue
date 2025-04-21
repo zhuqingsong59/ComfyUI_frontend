@@ -1,7 +1,7 @@
 <template>
   <div class="top-menubar border-none p-0 bg-transparent">
     <div class="top-menu-item"><i class="pi pi-images"></i>图库</div>
-    <div class="top-menu-item" @click="toggle">
+    <div class="top-menu-item" @click="showWorkFlowList">
       <i class="pi pi-list"></i>工作流
     </div>
     <div class="top-menu-item">
@@ -18,7 +18,7 @@ import Popover from 'primevue/popover'
 import { ref } from 'vue'
 
 const workFlowListRef = ref()
-const toggle = (event: MouseEvent) => {
+const showWorkFlowList = (event: MouseEvent) => {
   workFlowListRef.value.toggle(event)
 }
 </script>
