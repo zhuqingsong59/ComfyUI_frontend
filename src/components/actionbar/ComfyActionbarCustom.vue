@@ -1,5 +1,26 @@
 <template>
   <div class="actionbar w-fit">
+    <span
+      v-tooltip.bottom="'保存工作流'"
+      class="action-span"
+      @click="() => commandStore.execute('Comfy.SaveWorkflow')"
+    >
+      <i-lucide:save style="width: 20px; height: 20px" />
+    </span>
+    <span
+      v-tooltip.bottom="'上传本地工作流'"
+      class="action-span"
+      @click="() => commandStore.execute('Comfy.OpenWorkflow')"
+    >
+      <i-lucide:arrow-up-from-line style="width: 20px; height: 20px" />
+    </span>
+    <span
+      v-tooltip.bottom="'导出工作流'"
+      class="action-span"
+      @click="() => commandStore.execute('Comfy.ExportWorkflow')"
+    >
+      <i-lucide:arrow-down-to-line style="width: 20px; height: 20px" />
+    </span>
     <Button
       severity="success"
       class="comfyui-queue-button"
@@ -50,6 +71,13 @@ const btnClick = async () => {
 
 <style scoped>
 .actionbar {
+  gap: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .action-span {
+    cursor: pointer;
+  }
   .comfyui-queue-button {
     width: 160px;
     font-size: 16px;

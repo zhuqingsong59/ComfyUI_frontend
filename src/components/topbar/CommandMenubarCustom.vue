@@ -4,8 +4,11 @@
     <div class="top-menu-item" @click="showWorkFlowList">
       <i class="pi pi-list"></i>工作流
     </div>
-    <div class="top-menu-item">
-      <i-lucide:plus style="font-size: 20px" />新建
+    <div
+      class="top-menu-item"
+      @click="() => commandStore.execute('Comfy.NewBlankWorkflow')"
+    >
+      <i-lucide:plus style="width: 20px; height: 20px" />新建
     </div>
   </div>
   <Popover ref="workFlowListRef" class="work-flow-list-popover">
@@ -17,7 +20,12 @@
 import Popover from 'primevue/popover'
 import { ref } from 'vue'
 
+import { useCommandStore } from '@/stores/commandStore'
+
+const commandStore = useCommandStore()
+
 const workFlowListRef = ref()
+// 展示工作流列表
 const showWorkFlowList = (event: MouseEvent) => {
   workFlowListRef.value.toggle(event)
 }

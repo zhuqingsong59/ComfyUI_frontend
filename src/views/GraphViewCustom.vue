@@ -155,9 +155,13 @@ watchEffect(() => {
 const init = () => {
   const coreCommands = useCoreCommands()
   useCommandStore().registerCommands(coreCommands)
+  // 顶部菜单
   useMenuItemStore().registerCoreMenuCommands()
+  // 快捷键绑定
   useKeybindingService().registerCoreKeybindings()
+  // 左侧菜单
   useSidebarTabStore().registerCoreSidebarTabs()
+  // 底部面板
   useBottomPanelStore().registerCoreBottomPanelTabs()
   app.extensionManager = useWorkspaceStore()
 }
