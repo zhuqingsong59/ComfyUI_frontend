@@ -7,7 +7,7 @@
     <CommandMenubarCustom />
     <CommandMenubar />
     <div class="flex-grow min-w-0 app-drag h-full">
-      <div style="width: 100%; text-align: center">中间区域</div>
+      <ActionCenter />
     </div>
     <div ref="menuRight" class="comfyui-menu-right flex-shrink-0" />
     <Actionbar />
@@ -27,6 +27,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
+import ActionCenter from './actionCenter.vue'
 import Actionbar from '@/components/actionbar/ComfyActionbarCustom.vue'
 import CommandMenubar from '@/components/topbar/CommandMenubar.vue'
 import CommandMenubarCustom from '@/components/topbar/CommandMenubarCustom.vue'
