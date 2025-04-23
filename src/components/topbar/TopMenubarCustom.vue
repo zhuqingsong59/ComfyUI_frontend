@@ -27,10 +27,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
-import ActionCenter from './actionCenter.vue'
 import Actionbar from '@/components/actionbar/ComfyActionbarCustom.vue'
 import CommandMenubar from '@/components/topbar/CommandMenubar.vue'
 import CommandMenubarCustom from '@/components/topbar/CommandMenubarCustom.vue'
+import ActionCenter from '@/components/topbar/actionCenter.vue'
 import { app } from '@/scripts/app'
 import { useSettingStore } from '@/stores/settingStore'
 import { electronAPI, isElectron, isNativeWindow } from '@/utils/envUtil'
