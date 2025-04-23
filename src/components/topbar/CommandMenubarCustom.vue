@@ -21,7 +21,7 @@
           :key="workFlowItem.path"
           class="workFlow-item"
           :class="{ active: workFlowItem.path === activeWorkflow.path }"
-          @click="() => workflowService.openWorkflow(workFlowItem)"
+          @click="handleWorkflowClick(workFlowItem)"
         >
           {{ workFlowItem.filename }}
           <span class="date">
@@ -45,6 +45,7 @@ import { computed, ref } from 'vue'
 
 import { useWorkflowService } from '@/services/workflowService'
 import { useCommandStore } from '@/stores/commandStore'
+import type { ComfyWorkflow } from '@/stores/workflowStore'
 import { useWorkflowStore } from '@/stores/workflowStore'
 
 const commandStore = useCommandStore()
@@ -76,6 +77,13 @@ const workFlowListRef = ref()
 // 展示工作流列表
 const showWorkFlowList = (event: MouseEvent) => {
   workFlowListRef.value.toggle(event)
+}
+
+const handleWorkflowClick = async (workFlowItem: ComfyWorkflow) => {
+  if (workFlowItem.path === activeWorkflow.value.path) {
+    return
+  }
+  await workflowService.openWorkflow(workFlowItem)
 }
 </script>
 
