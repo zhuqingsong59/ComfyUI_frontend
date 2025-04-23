@@ -143,6 +143,7 @@ const ranameWorkFlow = async () => {
     cursor: pointer;
     border-radius: 4px;
     align-items: center;
+    user-select: none;
     justify-content: center;
     color: #fff;
     text-align: center;
