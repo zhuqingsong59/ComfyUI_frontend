@@ -215,7 +215,7 @@ export class ComfyApi extends EventTarget {
   user: string
   socket: WebSocket | null = null
   promptId?: string
-
+  axiosOption: any
   reportedUnknownMessageTypes = new Set<string>()
 
   constructor() {
@@ -224,6 +224,11 @@ export class ComfyApi extends EventTarget {
     this.api_host = location.host
     this.api_base = location.pathname.split('/').slice(0, -1).join('/')
     console.log('Running on', this.api_host)
+    this.axiosOption = {
+      headers: {
+        'Dabi-token': getToken() || ''
+      }
+    }
     this.initialClientId = sessionStorage.getItem('clientId')
   }
 
@@ -938,12 +943,8 @@ export class ComfyApi extends EventTarget {
   }
 
   async getLogs(): Promise<string> {
-    const axiosOption = {
-      headers: {
-        'Dabi-token': getToken() || ''
-      }
-    }
-    return (await axios.get(this.internalURL('/logs'), axiosOption)).data
+    
+    return (await axios.get(this.internalURL('/logs'), this.axiosOption)).data
   }
 
   async getRawLogs(): Promise<LogsRawResponse> {
