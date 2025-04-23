@@ -1,7 +1,7 @@
 <template>
   <div class="top-menubar border-none p-0 bg-transparent">
     <!-- v-tooltip.right="`使用'保存图像'节点出图会显示在图库中`" -->
-    <div class="top-menu-item"><i class="pi pi-images`"></i>图库</div>
+    <div class="top-menu-item"><i class="pi pi-images"></i>图库</div>
     <div class="top-menu-item" @click="showWorkFlowList">
       <i class="pi pi-list"></i>工作流
     </div>
@@ -22,14 +22,17 @@
           class="workFlow-item"
           :class="{ active: workFlowItem.path === activeWorkflow.path }"
           @click="handleWorkflowClick(workFlowItem)"
+          @contextmenu="openRenamePopover($event, workFlowItem)"
         >
-          {{ workFlowItem.filename }}
+          <div style="min-width: 50px">
+            {{ workFlowItem.filename }}
+          </div>
           <span class="date">
             {{ timestampToDateString(workFlowItem.lastModified * 1000) }}
           </span>
           <span
             class="delete"
-            @click="workflowService.deleteWorkflow(workFlowItem)"
+            @click.stop="workflowService.deleteWorkflow(workFlowItem)"
           >
             <i class="pi pi-trash" />
           </span>
@@ -37,16 +40,31 @@
       </template>
     </div>
   </Popover>
+  <Popover ref="renamePopoverRef" class="work-flow-rename-popover">
+    <div class="rename-div">
+      <div v-show="!isEdit" @click="showInput">重命名</div>
+      <InputText
+        v-show="isEdit"
+        ref="renameInputRef"
+        v-model="editValue"
+        class="rename-input"
+        type="text"
+        @blur="ranameWorkFlow"
+      />
+    </div>
+  </Popover>
 </template>
 
 <script setup lang="ts">
+import InputText from 'primevue/inputtext'
 import Popover from 'primevue/popover'
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 
 import { useWorkflowService } from '@/services/workflowService'
 import { useCommandStore } from '@/stores/commandStore'
 import type { ComfyWorkflow } from '@/stores/workflowStore'
 import { useWorkflowStore } from '@/stores/workflowStore'
+import { appendJsonExt } from '@/utils/formatUtil'
 
 const commandStore = useCommandStore()
 const workflowStore = useWorkflowStore()
@@ -78,12 +96,39 @@ const workFlowListRef = ref()
 const showWorkFlowList = (event: MouseEvent) => {
   workFlowListRef.value.toggle(event)
 }
-
+// 切换工作流
 const handleWorkflowClick = async (workFlowItem: ComfyWorkflow) => {
   if (workFlowItem.path === activeWorkflow.value.path) {
     return
   }
   await workflowService.openWorkflow(workFlowItem)
+}
+// 重命名
+const renamePopoverRef = ref()
+const renameInputRef = ref()
+const isEdit = ref(false)
+const editValue = ref('')
+let ranameWorkFlowItem: ComfyWorkflow
+// 打开菜单
+const openRenamePopover = (event: MouseEvent, workFlowItem: ComfyWorkflow) => {
+  event.preventDefault()
+  isEdit.value = false
+  ranameWorkFlowItem = workFlowItem
+  editValue.value = workFlowItem.filename
+  renamePopoverRef.value.toggle(event)
+}
+// 展示输入框
+const showInput = async () => {
+  isEdit.value = true
+  await nextTick()
+  renameInputRef.value.$el.focus()
+}
+const ranameWorkFlow = async () => {
+  const newName = editValue.value.trim()
+  if (!editValue.value || newName === ranameWorkFlowItem.filename) return
+  if (workFlowList.value.some((item) => item.filename === newName)) return
+  const newPath = ranameWorkFlowItem.directory + '/' + appendJsonExt(newName)
+  await workflowService.renameWorkflow(ranameWorkFlowItem, newPath)
 }
 </script>
 
@@ -126,6 +171,7 @@ const handleWorkflowClick = async (workFlowItem: ComfyWorkflow) => {
   }
   .p-popover-content {
     padding: 0;
+    user-select: none;
     .work-flow-list {
       width: 320px;
       padding: 8px 0;
@@ -171,6 +217,9 @@ const handleWorkflowClick = async (workFlowItem: ComfyWorkflow) => {
         }
         span {
           color: #fff;
+          &.date {
+            color: rgba(255, 255, 255, 0.6);
+          }
           &.delete {
             display: none;
             &:hover {
@@ -179,6 +228,34 @@ const handleWorkflowClick = async (workFlowItem: ComfyWorkflow) => {
           }
         }
       }
+    }
+  }
+}
+.work-flow-rename-popover {
+  /* left: 0 !important; */
+  &::after {
+    display: none;
+  }
+  &::before {
+    display: none;
+  }
+  .rename-div {
+    cursor: pointer;
+    width: 240px;
+    text-align: center;
+    div {
+      color: #fff;
+      font-family: 'Microsoft YaHei UI';
+      font-size: 14px;
+      text-align: left;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+    .rename-input {
+      --p-inputtext-focus-border-color: #33d528;
+      width: 200px;
+      height: 32px;
     }
   }
 }
