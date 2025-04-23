@@ -34,9 +34,11 @@ import {
   validateComfyNodeDef
 } from '@/schemas/nodeDefSchema'
 import { WorkflowTemplates } from '@/types/workflowTemplateTypes'
+import { getToken, generateUUID } from '@/utils/custom'
 
 interface QueuePromptRequestBody {
   client_id: string
+  prompt_id: string
   prompt: ComfyApiWorkflow
   extra_data: {
     extra_pnginfo: {
@@ -209,9 +211,10 @@ export class ComfyApi extends EventTarget {
   clientId?: string
   /**
    * The current user id.
-   */
+  */
   user: string
   socket: WebSocket | null = null
+  promptId?: string
 
   reportedUnknownMessageTypes = new Set<string>()
 
@@ -247,12 +250,16 @@ export class ComfyApi extends EventTarget {
       options.cache = 'no-cache'
     }
 
+    const token = getToken() || ''
     if (Array.isArray(options.headers)) {
       options.headers.push(['Comfy-User', this.user])
+      options.headers.push(['Dabi-token', token])
     } else if (options.headers instanceof Headers) {
       options.headers.set('Comfy-User', this.user)
+      options.headers.set('Dabi-token', token)
     } else {
       options.headers['Comfy-User'] = this.user
+      options.headers['Dabi-token'] = token
     }
     return fetch(this.apiURL(route), options)
   }
@@ -526,9 +533,10 @@ export class ComfyApi extends EventTarget {
     authToken?: string
   ): Promise<PromptResponse> {
     const { output: prompt, workflow } = data
-
+    this.promptId = generateUUID()
     const body: QueuePromptRequestBody = {
       client_id: this.clientId ?? '', // TODO: Unify clientId access
+      prompt_id: this.promptId,
       prompt,
       extra_data: {
         auth_token_comfy_org: authToken,
@@ -727,7 +735,7 @@ export class ComfyApi extends EventTarget {
    * Interrupts the execution of the running prompt
    */
   async interrupt() {
-    await this.#postItem('interrupt', null)
+    await this.#postItem('interrupt', { prompt_id: this.promptId })
   }
 
   /**
@@ -930,7 +938,12 @@ export class ComfyApi extends EventTarget {
   }
 
   async getLogs(): Promise<string> {
-    return (await axios.get(this.internalURL('/logs'))).data
+    const axiosOption = {
+      headers: {
+        'Dabi-token': getToken() || ''
+      }
+    }
+    return (await axios.get(this.internalURL('/logs'), axiosOption)).data
   }
 
   async getRawLogs(): Promise<LogsRawResponse> {
