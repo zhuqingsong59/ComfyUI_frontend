@@ -2,9 +2,10 @@
   <teleport :to="'.comfyui-body-left'">
     <nav class="side-tool-bar-container">
       <SidebarIcon
-        v-for="tab in tabs"
+        v-for="(tab, index) in tabs"
         :key="tab.id"
         :icon="tab.icon"
+        v-show="index < 2"
         :icon-badge="tab.iconBadge"
         :tooltip="tab.tooltip + getTabTooltipSuffix(tab)"
         :selected="tab.id === selectedTab?.id"

@@ -5,7 +5,7 @@
     class="comfyui-menu flex items-center"
   >
     <CommandMenubarCustom />
-    <CommandMenubar />
+    <CommandMenubar style="display: none" />
     <div class="flex-grow min-w-0 app-drag h-full">
       <ActionCenter />
     </div>
