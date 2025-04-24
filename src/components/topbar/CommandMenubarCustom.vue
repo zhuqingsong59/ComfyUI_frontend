@@ -1,7 +1,9 @@
 <template>
   <div class="top-menubar border-none p-0 bg-transparent">
     <!-- v-tooltip.right="`使用'保存图像'节点出图会显示在图库中`" -->
-    <div class="top-menu-item"><i class="pi pi-images"></i>图库</div>
+    <div class="top-menu-item" @click="emits('open-gallery')">
+      <i class="pi pi-images"></i>图库
+    </div>
     <div class="top-menu-item" @click="showWorkFlowList">
       <i class="pi pi-list"></i>工作流
     </div>
@@ -65,6 +67,8 @@ import { useCommandStore } from '@/stores/commandStore'
 import type { ComfyWorkflow } from '@/stores/workflowStore'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import { appendJsonExt } from '@/utils/formatUtil'
+
+const emits = defineEmits(['open-gallery'])
 
 const commandStore = useCommandStore()
 const workflowStore = useWorkflowStore()

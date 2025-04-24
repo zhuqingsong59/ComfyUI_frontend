@@ -1,7 +1,7 @@
 <template>
   <div class="comfyui-gallery h-screen w-screen">
     <div class="top-div">
-      <div class="back-div">
+      <div class="back-div" @click="emits('close-gallery')">
         <i class="pi pi-chevron-left"></i>
       </div>
       <div class="title-div">工作流图库</div>
@@ -29,6 +29,8 @@
 import Image from 'primevue/image'
 import { ref } from 'vue'
 
+const emits = defineEmits(['close-gallery'])
+
 interface ImageItem {
   url: string
 }
@@ -36,7 +38,7 @@ interface ImageItem {
 const galleryImageList = ref<ImageItem[]>([])
 for (let i = 0; i < 40; i++) {
   galleryImageList.value.push({
-    url: 'https://wx3.sinaimg.cn/mw690/88e90961ly1hwvqdknjo4j20u0140tav.jpg'
+    url: 'https://img0.baidu.com/it/u=2191392668,814349101&fm=253&app=138&f=JPEG?w=800&h=1399'
   })
 }
 </script>

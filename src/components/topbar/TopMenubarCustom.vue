@@ -4,7 +4,7 @@
     ref="topMenuRef"
     class="comfyui-menu flex items-center"
   >
-    <CommandMenubarCustom />
+    <CommandMenubarCustom v-bind="$attrs" />
     <CommandMenubar style="display: none" />
     <div class="flex-grow min-w-0 app-drag h-full">
       <ActionCenter />

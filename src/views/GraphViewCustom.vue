@@ -1,7 +1,7 @@
 <template>
   <div class="comfyui-body grid h-screen w-screen overflow-hidden">
     <div id="comfyui-body-top" class="comfyui-body-top">
-      <TopMenubar />
+      <TopMenubar @open-gallery="showGallery = true" />
     </div>
     <div id="comfyui-body-bottom" class="comfyui-body-bottom"></div>
     <div id="comfyui-body-left" class="comfyui-body-left" />
@@ -10,7 +10,7 @@
       <GraphCanvas @ready="onGraphReady" />
     </div>
   </div>
-  <GalleryView />
+  <GalleryView v-if="showGallery" @close-gallery="showGallery = false" />
   <GlobalToast />
   <RerouteMigrationToast />
   <UnloadWindowConfirmDialog v-if="!isElectron()" />
@@ -22,7 +22,14 @@
 import { useEventListener } from '@vueuse/core'
 import type { ToastMessageOptions } from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { computed, onBeforeUnmount, onMounted, watch, watchEffect } from 'vue'
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+  watchEffect
+} from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import BrowserTabTitle from '@/components/BrowserTabTitle.vue'
@@ -195,6 +202,8 @@ const onReconnected = () => {
     })
   }
 }
+
+const showGallery = ref(false)
 
 onMounted(() => {
   api.addEventListener('status', onStatus)
