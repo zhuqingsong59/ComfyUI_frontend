@@ -35,7 +35,6 @@ import { app } from '@/scripts/app'
 import { useSettingStore } from '@/stores/settingStore'
 import { electronAPI, isElectron, isNativeWindow } from '@/utils/envUtil'
 
-// const workspaceState = useWorkspaceStore()
 const settingStore = useSettingStore()
 const menuSetting = computed(() => settingStore.get('Comfy.UseNewMenu'))
 
