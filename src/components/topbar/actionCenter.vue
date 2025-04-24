@@ -14,9 +14,24 @@
     <Popover ref="actionPopoverRef" class="action-popover">
       <div class="action-div">
         <div class="action-item" @click="showInput">重命名</div>
-        <div class="action-item">保存</div>
-        <div class="action-item">另存为</div>
-        <div class="action-item">导出</div>
+        <div
+          class="action-item"
+          @click="() => commandStore.execute('Comfy.SaveWorkflow')"
+        >
+          保存
+        </div>
+        <div
+          class="action-item"
+          @click="() => commandStore.execute('Comfy.SaveWorkflowAs')"
+        >
+          另存为
+        </div>
+        <div
+          class="action-item"
+          @click="() => commandStore.execute('Comfy.ExportWorkflow')"
+        >
+          导出
+        </div>
       </div>
     </Popover>
   </div>
@@ -27,9 +42,11 @@ import Popover from 'primevue/popover'
 import { computed, nextTick, ref } from 'vue'
 
 import { useWorkflowService } from '@/services/workflowService'
+import { useCommandStore } from '@/stores/commandStore'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import { appendJsonExt } from '@/utils/formatUtil'
 
+const commandStore = useCommandStore()
 const workflowStore = useWorkflowStore()
 const workflowService = useWorkflowService()
 
