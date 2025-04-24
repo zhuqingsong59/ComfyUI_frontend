@@ -49,7 +49,7 @@
         v-model="editValue"
         class="rename-input"
         type="text"
-        @blur="ranameWorkFlow"
+        @blur="renameWorkFlow"
       />
     </div>
   </Popover>
@@ -108,12 +108,12 @@ const renamePopoverRef = ref()
 const renameInputRef = ref()
 const isEdit = ref(false)
 const editValue = ref('')
-let ranameWorkFlowItem: ComfyWorkflow
+let renameWorkFlowItem: ComfyWorkflow
 // 打开菜单
 const openRenamePopover = (event: MouseEvent, workFlowItem: ComfyWorkflow) => {
   event.preventDefault()
   isEdit.value = false
-  ranameWorkFlowItem = workFlowItem
+  renameWorkFlowItem = workFlowItem
   editValue.value = workFlowItem.filename
   renamePopoverRef.value.toggle(event)
 }
@@ -123,12 +123,12 @@ const showInput = async () => {
   await nextTick()
   renameInputRef.value.$el.focus()
 }
-const ranameWorkFlow = async () => {
+const renameWorkFlow = async () => {
   const newName = editValue.value.trim()
-  if (!editValue.value || newName === ranameWorkFlowItem.filename) return
+  if (!editValue.value || newName === renameWorkFlowItem.filename) return
   if (workFlowList.value.some((item) => item.filename === newName)) return
-  const newPath = ranameWorkFlowItem.directory + '/' + appendJsonExt(newName)
-  await workflowService.renameWorkflow(ranameWorkFlowItem, newPath)
+  const newPath = renameWorkFlowItem.directory + '/' + appendJsonExt(newName)
+  await workflowService.renameWorkflow(renameWorkFlowItem, newPath)
 }
 </script>
 
