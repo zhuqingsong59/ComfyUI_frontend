@@ -10,7 +10,7 @@
       <GraphCanvas @ready="onGraphReady" />
     </div>
   </div>
-
+  <GalleryView />
   <GlobalToast />
   <RerouteMigrationToast />
   <UnloadWindowConfirmDialog v-if="!isElectron()" />
@@ -28,6 +28,7 @@ import { useI18n } from 'vue-i18n'
 import BrowserTabTitle from '@/components/BrowserTabTitle.vue'
 import MenuHamburger from '@/components/MenuHamburger.vue'
 import UnloadWindowConfirmDialog from '@/components/dialog/UnloadWindowConfirmDialog.vue'
+import GalleryView from '@/components/gallery/GalleryView.vue'
 import GraphCanvas from '@/components/graph/GraphCanvasCustom.vue'
 import GlobalToast from '@/components/toast/GlobalToast.vue'
 import RerouteMigrationToast from '@/components/toast/RerouteMigrationToast.vue'

@@ -50,7 +50,7 @@ const hasQueuePendingTasks = computed(() => queueCountStore.count.value > 1)
 
 const btnLabel = computed(() => {
   if (hasQueuePendingTasks.value) {
-    return `正在排队中(${queueCountStore.count.value})人`
+    return `正在排队中(${queueCountStore.count.value}人)`
   } else if (isExecutingPrompt.value) {
     return '中止'
   }
@@ -81,6 +81,8 @@ const btnClick = async () => {
   .comfyui-queue-button {
     width: 160px;
     font-size: 16px;
+    padding: 0.5rem 0;
+    line-height: normal;
     --p-button-border-radius: 4px;
     font-family: 'Microsoft YaHei UI';
     --p-button-label-font-weight: 400;
