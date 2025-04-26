@@ -98,6 +98,11 @@ for (let i = 0; i < 40; i++) {
           .p-image {
             width: 100%;
             height: 100%;
+            &.p-image-preview {
+              &:hover > .p-image-preview-mask {
+                opacity: 0;
+              }
+            }
             img {
               width: 100%;
               height: 100%;
