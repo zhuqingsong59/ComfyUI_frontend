@@ -19,19 +19,28 @@
                 <i></i>
               </template>
             </Image>
-            <div class="hover-item icon-item delete-icon">
+            <div
+              class="hover-item icon-item delete-icon"
+              @click="deleteImage(imageItem)"
+            >
               <i class="pi pi-trash" style="font-size: 20px"></i>
             </div>
-            <div class="hover-item icon-item collect-icon">
-              <i class="pi pi-star" style="font-size: 20px"></i>
+            <div
+              class="hover-item icon-item collect-icon"
+              @click="collectImage(imageItem)"
+            >
+              <i
+                class="pi"
+                :class="imageItem.collected ? 'pi-star-fill' : 'pi-star'"
+                style="font-size: 20px"
+              ></i>
             </div>
-            <!-- <div class="hover-item icon-item">
-              <i class="pi pi-star-fill" style="font-size: 20px;"></i>
-            </div> -->
             <div class="hover-item icon-item download-icon">
               <i-lucide:arrow-down-to-line style="width: 20px; height: 20px" />
             </div>
-            <div class="hover-item btn-item">打开工作流</div>
+            <div class="hover-item btn-item" @click="openWorkFlow">
+              打开工作流
+            </div>
           </div>
         </div>
       </div>
@@ -42,17 +51,38 @@
 import Image from 'primevue/image'
 import { ref } from 'vue'
 
+// import { useWorkflowService } from '@/services/workflowService'
+
 const emits = defineEmits(['close-gallery'])
+
+// const workflowService = useWorkflowService()
 
 interface ImageItem {
   url: string
+  collected: boolean
 }
 
 const galleryImageList = ref<ImageItem[]>([])
 for (let i = 0; i < 40; i++) {
   galleryImageList.value.push({
-    url: 'https://img0.baidu.com/it/u=2191392668,814349101&fm=253&app=138&f=JPEG?w=800&h=1399'
+    url: 'https://img0.baidu.com/it/u=2191392668,814349101&fm=253&app=138&f=JPEG?w=800&h=1399',
+    collected: false
   })
+}
+// 删除图片
+const deleteImage = (image: ImageItem) => {
+  const index = galleryImageList.value.findIndex((item) => item === image)
+  galleryImageList.value.splice(index, 1)
+}
+// 收藏/取消收藏图片
+const collectImage = (image: ImageItem) => {
+  image.collected = !image.collected
+}
+// 打开工作流
+const openWorkFlow = () => {
+  console.log('打开工作流')
+  emits('close-gallery')
+  // workflowService.openWorkflow(ComfyWorkflow)
 }
 </script>
 <style>
@@ -149,6 +179,9 @@ for (let i = 0; i < 40; i++) {
               }
               &.collect-icon {
                 right: 52px;
+                .pi-star-fill {
+                  color: rgb(255, 196, 0);
+                }
               }
               &.download-icon {
                 right: 12px;
