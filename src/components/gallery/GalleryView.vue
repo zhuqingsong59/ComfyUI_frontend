@@ -19,6 +19,19 @@
                 <i></i>
               </template>
             </Image>
+            <div class="hover-item icon-item delete-icon">
+              <i class="pi pi-trash" style="font-size: 20px"></i>
+            </div>
+            <div class="hover-item icon-item collect-icon">
+              <i class="pi pi-star" style="font-size: 20px"></i>
+            </div>
+            <!-- <div class="hover-item icon-item">
+              <i class="pi pi-star-fill" style="font-size: 20px;"></i>
+            </div> -->
+            <div class="hover-item icon-item download-icon">
+              <i-lucide:arrow-down-to-line style="width: 20px; height: 20px" />
+            </div>
+            <div class="hover-item btn-item">打开工作流</div>
           </div>
         </div>
       </div>
@@ -107,6 +120,54 @@ for (let i = 0; i < 40; i++) {
               width: 100%;
               height: 100%;
               object-fit: cover;
+            }
+          }
+          &:hover {
+            .hover-item {
+              display: flex;
+            }
+          }
+          .hover-item {
+            display: none;
+            position: absolute;
+            align-items: center;
+            cursor: pointer;
+            color: rgba(34, 39, 34, 0.8);
+            justify-content: center;
+            &.icon-item {
+              top: 12px;
+              padding: 4px;
+              align-items: center;
+              gap: 12px;
+              width: 32px;
+              height: 32px;
+              border-radius: 4px;
+              background: rgba(255, 255, 255, 0.9);
+              box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.12);
+              &.delete-icon {
+                left: 12px;
+              }
+              &.collect-icon {
+                right: 52px;
+              }
+              &.download-icon {
+                right: 12px;
+              }
+            }
+            &.btn-item {
+              bottom: 12px;
+              left: 50%;
+              width: 160px;
+              height: 32px;
+              border-radius: 2px;
+              background: #43ff32;
+              transform: translateX(-50%);
+              color: #222722;
+              font-family: 'Microsoft YaHei UI';
+              font-size: 14px;
+              font-style: normal;
+              font-weight: 400;
+              line-height: normal;
             }
           }
         }
