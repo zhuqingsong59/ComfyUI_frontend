@@ -91,7 +91,7 @@ interface BackendApiCalls {
 }
 
 /** Dictionary of all api calls */
-interface ApiCalls extends BackendApiCalls, FrontendApiCalls {}
+interface ApiCalls extends BackendApiCalls, FrontendApiCalls { }
 
 /** Used to create a discriminating union on type value. */
 interface ApiMessage<T extends keyof ApiCalls> {
@@ -99,7 +99,7 @@ interface ApiMessage<T extends keyof ApiCalls> {
   data: ApiCalls[T]
 }
 
-export class UnauthorizedError extends Error {}
+export class UnauthorizedError extends Error { }
 
 /** Ensures workers get a fair shake. */
 type Unionize<T> = T[keyof T]
@@ -125,10 +125,10 @@ type AsCustomEvents<T> = {
 /** Handles differing event and API signatures. */
 type ApiToEventType<T = ApiCalls> = {
   [K in keyof T]: K extends 'status'
-    ? StatusWsMessageStatus
-    : K extends 'executing'
-      ? NodeId
-      : T[K]
+  ? StatusWsMessageStatus
+  : K extends 'executing'
+  ? NodeId
+  : T[K]
 }
 
 /** Dictionary of types used in the detail for a custom event */
@@ -223,6 +223,7 @@ export class ComfyApi extends EventTarget {
     this.user = ''
     this.api_host = location.host
     this.api_base = location.pathname.split('/').slice(0, -1).join('/')
+    console.log('this.api_base: ', this.api_base);
     console.log('Running on', this.api_host)
     this.axiosOption = {
       headers: {
@@ -238,6 +239,11 @@ export class ComfyApi extends EventTarget {
 
   apiURL(route: string): string {
     return this.api_base + '/api' + route
+  }
+
+  dabiURL(route: string): string {
+    console.log('this.api_base: ', this.api_base);
+    return this.api_base + '/dabi/test' + route
   }
 
   fileURL(route: string): string {
@@ -521,7 +527,7 @@ export class ComfyApi extends EventTarget {
     for (const key in objectInfoUnsafe) {
       const validatedDef = validateComfyNodeDef(
         objectInfoUnsafe[key],
-        /* onError=*/ (errorMessage: string) => {
+        /* onError=*/(errorMessage: string) => {
           console.warn(
             `Skipping invalid node definition: ${key}. See debug log for more information.`
           )
@@ -533,6 +539,73 @@ export class ComfyApi extends EventTarget {
       }
     }
     return objectInfo
+  }
+
+  /**
+   * 获取图库分页列表（POST 请求，使用 axios）
+   * @param {Object} params 包含分页参数的对象
+   * @param {number} params.pageNo 页码
+   * @param {number} params.pageSize 每页大小
+   * @param {number} params.mediaType 媒体类型
+   * @param {number} params.folderId 文件夹 ID
+   * @returns {Promise<any>} 返回分页数据
+   */
+  async getGalleryFilesByPage(params: { pageNo: number; pageSize: number, mediaType: number, folderId: number }): Promise<any> {
+    const route = '/comfyflow/listFilesByPage';
+    const url = this.dabiURL(route);
+    try {
+      const response = await axios.post(
+        url,
+        params,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Dabi-token': getToken() || ''
+          }
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error(`Failed to fetch gallery files: ${response.statusText}`);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching gallery files:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 获取ossCode列表的url
+   * @param {Object} params 包含代码列表的对象
+   * @param {Array<string>} params.codeList 代码列表
+   * @returns {Promise<any>} 返回代码列表的url
+   */
+  async getOssCodeUrl(params: { codeList: Array<string> }): Promise<any> {
+    const route = '/comfy/image/batchGetUrl';
+    const url = this.dabiURL(route);
+    try {
+      const response = await axios.post(
+        url,
+        params,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Dabi-token': getToken() || ''
+          }
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error(`Failed to fetch gallery files: ${response.statusText}`);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching gallery files:', error);
+      throw error;
+    }
   }
 
   /**
@@ -840,11 +913,11 @@ export class ComfyApi extends EventTarget {
       throwOnError?: boolean
       full_info?: boolean
     } = {
-      overwrite: true,
-      stringify: true,
-      throwOnError: true,
-      full_info: false
-    }
+        overwrite: true,
+        stringify: true,
+        throwOnError: true,
+        full_info: false
+      }
   ): Promise<Response> {
     const resp = await this.fetchApi(
       `/userdata/${encodeURIComponent(file)}?overwrite=${options.overwrite}&full_info=${options.full_info}`,

@@ -18,7 +18,7 @@ const IS_DEV = process.env.NODE_ENV === 'development'
 const SHOULD_MINIFY = process.env.ENABLE_MINIFY === 'true'
 // vite dev server will listen on all addresses, including LAN and public addresses
 const VITE_REMOTE_DEV = process.env.VITE_REMOTE_DEV === 'true'
-
+const DEV_SERVER_REQUEST_URL = process.env.DEV_SERVER_REQUEST_URL
 const DEV_SERVER_COMFYUI_URL =
   process.env.DEV_SERVER_COMFYUI_URL || 'http://127.0.0.1:8188'
 
@@ -58,6 +58,12 @@ export default defineConfig({
       '/testsubrouteindex': {
         target: 'http://localhost:5173',
         rewrite: (path) => path.substring('/testsubrouteindex'.length)
+      },
+      '/dabi': {
+        target: DEV_SERVER_REQUEST_URL,
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace('/dabi/', '/')
       }
     }
   },

@@ -49,7 +49,9 @@
 </template>
 <script setup lang="ts">
 import Image from 'primevue/image'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+
+import { api } from '@/scripts/api'
 
 // import { useWorkflowService } from '@/services/workflowService'
 
@@ -60,15 +62,39 @@ const emits = defineEmits(['close-gallery'])
 interface ImageItem {
   url: string
   collected: boolean
+  code: string
+  id: string
 }
 
+let pageNo = 1
+let pageSize = 100
+const codeMap: { [key: string]: string } = {}
 const galleryImageList = ref<ImageItem[]>([])
-for (let i = 0; i < 40; i++) {
-  galleryImageList.value.push({
-    url: 'https://img0.baidu.com/it/u=2191392668,814349101&fm=253&app=138&f=JPEG?w=800&h=1399',
-    collected: false
+const getGalleryImageList = async () => {
+  const res = await api.getGalleryFilesByPage({
+    pageNo,
+    pageSize,
+    mediaType: 10,
+    folderId: -1
   })
+  if (res.success) {
+    const data = res?.data?.list || []
+    const codeList = data.map((item: any) => item.code)
+    const ossCodeUrl = await api.getOssCodeUrl({ codeList })
+    for (let key in ossCodeUrl.data) {
+      codeMap[key] = ossCodeUrl.data[key]
+    }
+    galleryImageList.value = data.map((item: any) => ({
+      url: codeMap[item.code],
+      collected: item.collected,
+      code: item.code,
+      id: item.id
+    }))
+  }
 }
+onMounted(async () => {
+  await getGalleryImageList()
+})
 // 删除图片
 const deleteImage = (image: ImageItem) => {
   const index = galleryImageList.value.findIndex((item) => item === image)
