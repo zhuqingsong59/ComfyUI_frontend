@@ -35,7 +35,10 @@
                 style="font-size: 20px"
               ></i>
             </div>
-            <div class="hover-item icon-item download-icon">
+            <div
+              class="hover-item icon-item download-icon"
+              @click="downloadImage(imageItem)"
+            >
               <i-lucide:arrow-down-to-line style="width: 20px; height: 20px" />
             </div>
             <div class="hover-item btn-item" @click="openWorkFlow(imageItem)">
@@ -51,7 +54,7 @@
 import Image from 'primevue/image'
 import { onMounted, ref } from 'vue'
 
-import { urlToFile } from '@/composables/useUrlUtils'
+import { downloadFileByUrl, urlToFile } from '@/composables/useUrlUtils'
 import { api } from '@/scripts/api'
 import { app } from '@/scripts/app'
 
@@ -61,6 +64,7 @@ interface ImageItem {
   url: string
   collected: boolean
   code: string
+  name: string
   id: string
 }
 
@@ -86,6 +90,7 @@ const getGalleryImageList = async () => {
       url: codeMap[item.code],
       collected: item.collected,
       code: item.code,
+      name: item.name,
       id: item.id
     }))
   }
@@ -102,9 +107,13 @@ const deleteImage = (image: ImageItem) => {
 const collectImage = (image: ImageItem) => {
   image.collected = !image.collected
 }
+
+// 下载图片
+const downloadImage = async (imageItem: ImageItem) => {
+  await downloadFileByUrl(imageItem.url, imageItem.name)
+}
 // 打开工作流
 const openWorkFlow = async (imageItem: ImageItem) => {
-  console.log('打开工作流')
   const file = await urlToFile(imageItem.url)
   await app.handleFile(file)
   emits('close-gallery')
