@@ -38,7 +38,7 @@
             <div class="hover-item icon-item download-icon">
               <i-lucide:arrow-down-to-line style="width: 20px; height: 20px" />
             </div>
-            <div class="hover-item btn-item" @click="openWorkFlow">
+            <div class="hover-item btn-item" @click="openWorkFlow(imageItem)">
               打开工作流
             </div>
           </div>
@@ -51,13 +51,11 @@
 import Image from 'primevue/image'
 import { onMounted, ref } from 'vue'
 
+import { urlToFile } from '@/composables/useUrlUtils'
 import { api } from '@/scripts/api'
-
-// import { useWorkflowService } from '@/services/workflowService'
+import { app } from '@/scripts/app'
 
 const emits = defineEmits(['close-gallery'])
-
-// const workflowService = useWorkflowService()
 
 interface ImageItem {
   url: string
@@ -105,10 +103,11 @@ const collectImage = (image: ImageItem) => {
   image.collected = !image.collected
 }
 // 打开工作流
-const openWorkFlow = () => {
+const openWorkFlow = async (imageItem: ImageItem) => {
   console.log('打开工作流')
+  const file = await urlToFile(imageItem.url)
+  await app.handleFile(file)
   emits('close-gallery')
-  // workflowService.openWorkflow(ComfyWorkflow)
 }
 </script>
 <style>
