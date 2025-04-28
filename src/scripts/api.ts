@@ -343,6 +343,9 @@ export class ComfyApi extends EventTarget {
     if (existingSession) {
       existingSession = '?clientId=' + existingSession
     }
+    if (process.env.NODE_ENV !== 'development') {
+      existingSession = '/ws' + existingSession
+    }
     this.socket = new WebSocket(
       `ws${window.location.protocol === 'https:' ? 's' : ''}://${this.api_host}${this.api_base}/ws${existingSession}`
     )
@@ -968,7 +971,7 @@ export class ComfyApi extends EventTarget {
    * @returns The custom nodes i18n data
    */
   async getCustomNodesI18n(): Promise<Record<string, any>> {
-    return (await axios.get(this.apiURL('/i18n'))).data
+    return (await axios.get(this.apiURL('/i18n'), this.axiosOption)).data
   }
 }
 
