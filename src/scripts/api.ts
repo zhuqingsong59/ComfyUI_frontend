@@ -34,7 +34,7 @@ import {
   validateComfyNodeDef
 } from '@/schemas/nodeDefSchema'
 import { WorkflowTemplates } from '@/types/workflowTemplateTypes'
-import { getToken, generateUUID } from '@/utils/custom'
+import { generateUUID, getToken } from '@/utils/custom'
 
 interface QueuePromptRequestBody {
   client_id: string
@@ -91,7 +91,7 @@ interface BackendApiCalls {
 }
 
 /** Dictionary of all api calls */
-interface ApiCalls extends BackendApiCalls, FrontendApiCalls { }
+interface ApiCalls extends BackendApiCalls, FrontendApiCalls {}
 
 /** Used to create a discriminating union on type value. */
 interface ApiMessage<T extends keyof ApiCalls> {
@@ -99,7 +99,7 @@ interface ApiMessage<T extends keyof ApiCalls> {
   data: ApiCalls[T]
 }
 
-export class UnauthorizedError extends Error { }
+export class UnauthorizedError extends Error {}
 
 /** Ensures workers get a fair shake. */
 type Unionize<T> = T[keyof T]
@@ -125,10 +125,10 @@ type AsCustomEvents<T> = {
 /** Handles differing event and API signatures. */
 type ApiToEventType<T = ApiCalls> = {
   [K in keyof T]: K extends 'status'
-  ? StatusWsMessageStatus
-  : K extends 'executing'
-  ? NodeId
-  : T[K]
+    ? StatusWsMessageStatus
+    : K extends 'executing'
+      ? NodeId
+      : T[K]
 }
 
 /** Dictionary of types used in the detail for a custom event */
@@ -211,7 +211,7 @@ export class ComfyApi extends EventTarget {
   clientId?: string
   /**
    * The current user id.
-  */
+   */
   user: string
   socket: WebSocket | null = null
   promptId?: string
@@ -266,7 +266,7 @@ export class ComfyApi extends EventTarget {
       options.headers['Comfy-User'] = this.user
       options.headers['Dabi-token'] = token
     }
-    return fetch(this.apiURL(route), options).then(response => {
+    return fetch(this.apiURL(route), options).then((response) => {
       if (response.status === 401) {
         // 跳转到登录页面
         window.location.href = '/login'
@@ -521,7 +521,7 @@ export class ComfyApi extends EventTarget {
     for (const key in objectInfoUnsafe) {
       const validatedDef = validateComfyNodeDef(
         objectInfoUnsafe[key],
-        /* onError=*/(errorMessage: string) => {
+        /* onError=*/ (errorMessage: string) => {
           console.warn(
             `Skipping invalid node definition: ${key}. See debug log for more information.`
           )
@@ -840,11 +840,11 @@ export class ComfyApi extends EventTarget {
       throwOnError?: boolean
       full_info?: boolean
     } = {
-        overwrite: true,
-        stringify: true,
-        throwOnError: true,
-        full_info: false
-      }
+      overwrite: true,
+      stringify: true,
+      throwOnError: true,
+      full_info: false
+    }
   ): Promise<Response> {
     const resp = await this.fetchApi(
       `/userdata/${encodeURIComponent(file)}?overwrite=${options.overwrite}&full_info=${options.full_info}`,
@@ -953,7 +953,6 @@ export class ComfyApi extends EventTarget {
   }
 
   async getLogs(): Promise<string> {
-
     return (await axios.get(this.internalURL('/logs'), this.axiosOption)).data
   }
 
