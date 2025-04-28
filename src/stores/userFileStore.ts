@@ -95,6 +95,7 @@ export class UserFile {
       return this as LoadedUserFile
 
     this.isLoading = true
+    console.log('this.path: ', this.path)
     const resp = await api.getUserData(this.path)
     if (resp.status !== 200) {
       throw new Error(

@@ -234,16 +234,15 @@ export class ComfyApi extends EventTarget {
   }
 
   internalURL(route: string): string {
-    return this.api_base + '/internal' + route
+    return this.api_base + (process.env.NODE_ENV === 'development' ? '/internal' :'/internal/internal') + route
   }
 
   apiURL(route: string): string {
-    return this.api_base + '/api' + route
+    return this.api_base + (process.env.NODE_ENV === 'development' ? '/api' : '/api/api') + route
   }
 
   dabiURL(route: string): string {
-    console.log('this.api_base: ', this.api_base);
-    return this.api_base + '/dabi/test' + route
+    return 'dabi/test' + route
   }
 
   fileURL(route: string): string {
