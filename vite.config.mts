@@ -43,9 +43,10 @@ export default defineConfig({
         }
       },
 
-      '/ws': {
+      '/comfyuiws': {
         target: DEV_SERVER_COMFYUI_URL,
-        ws: true
+        ws: true,
+        rewrite: (path) => path.replace('/comfyuiws/', '/')
       },
 
       '/workflow_templates': {

@@ -355,11 +355,8 @@ export class ComfyApi extends EventTarget {
     if (existingSession) {
       existingSession = '?clientId=' + existingSession
     }
-    if (process.env.NODE_ENV !== 'development') {
-      existingSession = '/ws' + existingSession
-    }
     this.socket = new WebSocket(
-      `ws${window.location.protocol === 'https:' ? 's' : ''}://${this.api_host}${this.api_base}/ws${existingSession}`
+      `ws${window.location.protocol === 'https:' ? 's' : ''}://${this.api_host}/comfyuiws/ws${existingSession}`
     )
     this.socket.binaryType = 'arraybuffer'
 
