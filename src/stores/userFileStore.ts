@@ -133,25 +133,23 @@ export class UserFile {
    */
   async save({ force = false }: { force?: boolean } = {}): Promise<UserFile> {
     if (this.isPersisted && !this.isModified && !force) return this
-    console.log('this.content: ', this.content)
-    const res = await api.saveNewWorkflow({
-      name: this.fullFilename,
-      content: JSON.stringify(this.content)
-    })
-    console.log('res: ', res)
-    // const resp = await api.storeUserData(this.path, this.content, {
-    //   overwrite: this.isPersisted,
-    //   throwOnError: true,
-    //   full_info: true
-    // })
-    // Note: Backend supports full_info=true feature after
-    // https://github.com/comfyanonymous/ComfyUI/pull/5446
-    // const updatedFile = (await resp.json()) as string | UserDataFullInfo
-    // console.log('updatedFile: ', updatedFile)
-    // if (typeof updatedFile === 'object') {
-    //   this.lastModified = updatedFile.modified
-    //   this.size = updatedFile.size
-    // }
+    console.log('this: ', this)
+    if (this.isTemporary) {
+      const res = await api.saveNewWorkflow({
+        name: this.fullFilename,
+        content: JSON.stringify(this.content)
+      })
+      this.id = res.id
+      this.size = 1
+      this.lastModified = Date.now()
+    } else {
+      await api.updateWorkflow({
+        id: this.id,
+        name: this.fullFilename,
+        content: JSON.stringify(this.content)
+      })
+      this.lastModified = Date.now()
+    }
     this.originalContent = this.content
     return this
   }

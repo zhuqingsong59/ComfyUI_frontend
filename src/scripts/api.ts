@@ -1201,6 +1201,39 @@ export class ComfyApi extends EventTarget {
       throw error
     }
   }
+
+  /**
+   * 更新工作流
+   * @param {Object} params 更新工作流的参数
+   * @param {string} params.id 工作流ID
+   * @param {string} params.name 工作流名称
+   * @param {string} [params.content] 可选的工作流内容
+   * @returns {Promise<any>} 更新结果
+   */
+  async updateWorkflow(params: { id: string; name: string; content?: string }): Promise<any> {
+    const url = this.apiURL('/dapi/updateFlow');
+    try {
+      const response = await axios.post(
+        url,
+        params,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Dabi-token': getToken() || ''
+          }
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error(`更新工作流失败: ${response.status} ${response.statusText}`);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('更新工作流失败:', error);
+      throw error;
+    }
+  }
 }
 
 export const api = new ComfyApi()
