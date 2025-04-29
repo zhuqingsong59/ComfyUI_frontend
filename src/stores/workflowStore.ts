@@ -7,7 +7,8 @@ import { api } from '@/scripts/api'
 import { ChangeTracker } from '@/scripts/changeTracker'
 import { defaultGraphJSON } from '@/scripts/defaultGraph'
 import { getPathDetails } from '@/utils/formatUtil'
-import { syncEntities } from '@/utils/syncUtil'
+
+// import { syncEntities } from '@/utils/syncUtil'
 
 import { UserFile } from './userFileStore'
 
@@ -27,8 +28,13 @@ export class ComfyWorkflow extends UserFile {
    * @param options The path, modified, and size of the workflow.
    * Note: path is the full path, including the 'workflows/' prefix.
    */
-  constructor(options: { path: string; modified: number; size: number }) {
-    super(options.path, options.modified, options.size)
+  constructor(options: {
+    id: string
+    path: string
+    modified: number
+    size: number
+  }) {
+    super(options.id, options.path, options.modified, options.size)
   }
 
   get key() {
@@ -282,6 +288,7 @@ export const useWorkflowStore = defineStore('workflow', () => {
       ComfyWorkflow.basePath + (path ?? 'Unsaved Workflow.json')
     )
     const workflow = new ComfyWorkflow({
+      id: '-1',
       path: fullPath,
       modified: Date.now(),
       size: -1
@@ -329,23 +336,63 @@ export const useWorkflowStore = defineStore('workflow', () => {
   const persistedWorkflows = computed(() =>
     Array.from(workflows.value).filter((workflow) => workflow.isPersisted)
   )
-  const syncWorkflows = async (dir: string = '') => {
-    await syncEntities(
-      dir ? 'workflows/' + dir : 'workflows',
-      workflowLookup.value,
-      (file) =>
-        new ComfyWorkflow({
+  // const syncWorkflows = async (dir: string = '') => {
+  //   await syncEntities(
+  //     dir ? 'workflows/' + dir : 'workflows',
+  //     workflowLookup.value,
+  //     (file) =>
+  //       new ComfyWorkflow({
+  //         path: file.path,
+  //         modified: file.modified,
+  //         size: file.size
+  //       }),
+  //     (existingWorkflow, file) => {
+  //       existingWorkflow.lastModified = file.modified
+  //       existingWorkflow.size = file.size
+  //       existingWorkflow.unload()
+  //     },
+  //     /* exclude */
+  //     (workflow) => workflow.isTemporary
+  //   )
+  // }
+
+  const syncWorkflows = async () => {
+    const files = await api.getNewWorkflowList()
+    // 将文件列表转换为工作流对象
+    const newWorkflows = files.map((file) => ({
+      id: String(file.id),
+      path: `workflows/${file.name}`,
+      modified: new Date(file.modified).getTime(),
+      size: 1
+    }))
+
+    // 更新现有工作流
+    for (const file of newWorkflows) {
+      const existingWorkflow = workflowLookup.value[file.path]
+
+      if (!existingWorkflow) {
+        // 新工作流，添加到映射中
+        workflowLookup.value[file.path] = new ComfyWorkflow({
+          id: file.id,
           path: file.path,
           modified: file.modified,
           size: file.size
-        }),
-      (existingWorkflow, file) => {
+        })
+      } else if (!existingWorkflow.isTemporary) {
+        // 更新现有工作流的属性
         existingWorkflow.lastModified = file.modified
         existingWorkflow.size = file.size
         existingWorkflow.unload()
-      },
-      /* exclude */ (workflow) => workflow.isTemporary
-    )
+      }
+    }
+
+    // 删除不再存在的工作流
+    for (const [path, workflow] of Object.entries(workflowLookup.value)) {
+      if (workflow.isTemporary) continue
+      if (!newWorkflows.some((file) => file.path === path)) {
+        delete workflowLookup.value[path]
+      }
+    }
   }
 
   const bookmarkStore = useWorkflowBookmarkStore()

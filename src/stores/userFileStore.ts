@@ -31,6 +31,7 @@ export class UserFile {
   originalContent: string | null = null
 
   constructor(
+    public id: string,
     /**
      * Path relative to ComfyUI/user/ directory.
      */
@@ -45,6 +46,7 @@ export class UserFile {
     public size: number
   ) {
     const details = getPathDetails(path)
+    this.id = id
     this.path = path
     this.directory = details.directory
     this.fullFilename = details.fullFilename
@@ -62,7 +64,7 @@ export class UserFile {
   }
 
   static createTemporary(path: string): UserFile {
-    return new UserFile(path, Date.now(), -1)
+    return new UserFile('-1', path, Date.now(), -1)
   }
 
   get isTemporary() {
@@ -95,14 +97,15 @@ export class UserFile {
       return this as LoadedUserFile
 
     this.isLoading = true
-    console.log('this.path: ', this.path)
-    const resp = await api.getUserData(this.path)
-    if (resp.status !== 200) {
-      throw new Error(
-        `Failed to load file '${this.path}': ${resp.status} ${resp.statusText}`
-      )
-    }
-    this.content = await resp.text()
+    // const resp = await api.getUserData(this.path)
+    // if (resp.status !== 200) {
+    //   throw new Error(
+    //     `Failed to load file '${this.path}': ${resp.status} ${resp.statusText}`
+    //   )
+    // }
+    // this.content = await resp.text()
+    const respJson = await api.getNewWorkflowById(this.id)
+    this.content = JSON.parse(respJson.content)
     this.originalContent = this.content
     this.isLoading = false
     return this as LoadedUserFile
@@ -130,20 +133,25 @@ export class UserFile {
    */
   async save({ force = false }: { force?: boolean } = {}): Promise<UserFile> {
     if (this.isPersisted && !this.isModified && !force) return this
-
-    const resp = await api.storeUserData(this.path, this.content, {
-      overwrite: this.isPersisted,
-      throwOnError: true,
-      full_info: true
+    console.log('this.content: ', this.content)
+    const res = await api.saveNewWorkflow({
+      name: this.fullFilename,
+      content: JSON.stringify(this.content)
     })
-
+    console.log('res: ', res)
+    // const resp = await api.storeUserData(this.path, this.content, {
+    //   overwrite: this.isPersisted,
+    //   throwOnError: true,
+    //   full_info: true
+    // })
     // Note: Backend supports full_info=true feature after
     // https://github.com/comfyanonymous/ComfyUI/pull/5446
-    const updatedFile = (await resp.json()) as string | UserDataFullInfo
-    if (typeof updatedFile === 'object') {
-      this.lastModified = updatedFile.modified
-      this.size = updatedFile.size
-    }
+    // const updatedFile = (await resp.json()) as string | UserDataFullInfo
+    // console.log('updatedFile: ', updatedFile)
+    // if (typeof updatedFile === 'object') {
+    //   this.lastModified = updatedFile.modified
+    //   this.size = updatedFile.size
+    // }
     this.originalContent = this.content
     return this
   }
@@ -215,7 +223,7 @@ export const useUserFileStore = defineStore('userFile', () => {
     await syncEntities(
       dir,
       userFilesByPath.value,
-      (file) => new UserFile(file.path, file.modified, file.size),
+      (file) => new UserFile(file.id, file.path, file.modified, file.size),
       (existingFile, file) => {
         existingFile.lastModified = file.modified
         existingFile.size = file.size

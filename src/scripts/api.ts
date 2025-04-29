@@ -1144,6 +1144,63 @@ export class ComfyApi extends EventTarget {
   async getCustomNodesI18n(): Promise<Record<string, any>> {
     return (await axios.get(this.apiURL('/i18n'), this.axiosOption)).data
   }
+
+  /**
+   * 新工作流列表接口
+   * @returns {Promise<any[]>} 工作流列表
+   */
+  async getNewWorkflowList(): Promise<any[]> {
+    const resp = await this.fetchApi('/dapi/listFlow')
+    if (resp.status !== 200) {
+      throw new Error(`获取工作流列表失败: ${resp.status} ${resp.statusText}`)
+    }
+    return resp.json()
+  }
+
+  /**
+   * 新保存工作流接口
+   * @param data 保存的数据
+   */
+  async saveNewWorkflow(data: any): Promise<any> {
+    const resp = await this.fetchApi('/dapi/saveFlow', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    if (resp.status !== 200) {
+      throw new Error(`保存工作流失败: ${resp.status} ${resp.statusText}`)
+    }
+    return resp.json()
+  }
+  /**
+   * 获取指定ID的工作流详情
+   * @param {number|string} id 工作流ID
+   * @returns {Promise<any>} 工作流详情
+   */
+  async getNewWorkflowById(id: number | string): Promise<any> {
+    const url = this.apiURL('/dapi/getFlow')
+    try {
+      const response = await axios.post(
+        url,
+        { id },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Dabi-token': getToken() || ''
+          }
+        }
+      )
+      if (response.status !== 200) {
+        throw new Error(`获取工作流失败: ${response.status} ${response.statusText}`)
+      }
+      return response.data
+    } catch (error) {
+      console.error('获取工作流失败:', error)
+      throw error
+    }
+  }
 }
 
 export const api = new ComfyApi()

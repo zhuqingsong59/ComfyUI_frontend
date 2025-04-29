@@ -30,7 +30,7 @@
             {{ workFlowItem.filename }}
           </div>
           <span class="date">
-            {{ timestampToDateString(workFlowItem.lastModified * 1000) }}
+            {{ timestampToDateString(workFlowItem.lastModified) }}
           </span>
           <span
             class="delete"
