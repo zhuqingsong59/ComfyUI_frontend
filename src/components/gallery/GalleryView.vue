@@ -69,7 +69,7 @@ interface ImageItem {
   collectId: string
   code: string
   name: string
-  id: string
+  id: number
 }
 
 let pageNo = 1
