@@ -171,21 +171,25 @@ export class UserFile {
       this.updatePath(newPath)
       return this
     }
-
-    const resp = await api.moveUserData(this.path, newPath)
-    if (resp.status !== 200) {
-      throw new Error(
-        `Failed to rename file '${this.path}': ${resp.status} ${resp.statusText}`
-      )
-    }
+    // const resp = await api.moveUserData(this.path, newPath)
+    // if (resp.status !== 200) {
+    //   throw new Error(
+    //     `Failed to rename file '${this.path}': ${resp.status} ${resp.statusText}`
+    //   )
+    // }
+    await api.updateWorkflow({
+      id: this.id,
+      name: newPath.replace('workflows/', '')
+    })
+    this.lastModified = Date.now()
     this.updatePath(newPath)
     // Note: Backend supports full_info=true feature after
     // https://github.com/comfyanonymous/ComfyUI/pull/5446
-    const updatedFile = (await resp.json()) as string | UserDataFullInfo
-    if (typeof updatedFile === 'object') {
-      this.lastModified = updatedFile.modified
-      this.size = updatedFile.size
-    }
+    // const updatedFile = (await resp.json()) as string | UserDataFullInfo
+    // if (typeof updatedFile === 'object') {
+    //   this.lastModified = updatedFile.modified
+    //   this.size = updatedFile.size
+    // }
     return this
   }
 }
