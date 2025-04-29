@@ -607,6 +607,69 @@ export class ComfyApi extends EventTarget {
     }
   }
 
+   /**
+   * 收藏图片
+   * @param {Object} params 包含图片code的对象
+   * @param {string} params.code 图片code
+   * @returns {Promise<any>} 返回代码列表的url
+   */
+  async collectImage(params: {code:string}): Promise<any> {
+    const route = '/image/library/collect';
+    const url = this.dabiURL(route);
+      try {
+      const response = await axios.post(
+        url,
+        params,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Dabi-token': getToken() || ''
+          }
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error(`Failed to collect image: ${response.statusText}`);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Error collect image:', error);
+      throw error;
+    }
+  }
+   /**
+   * 取消收藏图片
+   * @param {Object} params 包含图片code的对象
+   * @param {Array<string>} params.ids 代码列表
+   * @returns {Promise<any>} 返回代码列表的url
+   */
+  async cancelCollectImage(params: {ids:Array<string>}): Promise<any> {
+    const route = '/image/library/delete';
+    const url = this.dabiURL(route);
+      try {
+      const response = await axios.post(
+        url,
+        params,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Dabi-token': getToken() || ''
+          }
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error(`Failed to cancel collect image: ${response.statusText}`);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Error cancel collect image:', error);
+      throw error;
+    }
+  }
+
   /**
    * Queues a prompt to be executed
    * @param {number} number The index at which to queue the prompt, passing -1 will insert the prompt at the front of the queue

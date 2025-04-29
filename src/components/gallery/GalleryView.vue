@@ -52,17 +52,21 @@
 </template>
 <script setup lang="ts">
 import Image from 'primevue/image'
+import { useToast } from 'primevue/usetoast'
 import { onMounted, ref } from 'vue'
 
 import { downloadFileByUrl, urlToFile } from '@/composables/useUrlUtils'
 import { api } from '@/scripts/api'
 import { app } from '@/scripts/app'
 
+const toast = useToast()
+
 const emits = defineEmits(['close-gallery'])
 
 interface ImageItem {
   url: string
   collected: boolean
+  collectId: string
   code: string
   name: string
   id: string
@@ -88,7 +92,8 @@ const getGalleryImageList = async () => {
     }
     galleryImageList.value = data.map((item: any) => ({
       url: codeMap[item.code],
-      collected: item.collected,
+      collected: item.collectFlag,
+      collectId: item.collectId || '',
       code: item.code,
       name: item.name,
       id: item.id
@@ -104,8 +109,28 @@ const deleteImage = (image: ImageItem) => {
   galleryImageList.value.splice(index, 1)
 }
 // 收藏/取消收藏图片
-const collectImage = (image: ImageItem) => {
-  image.collected = !image.collected
+const collectImage = async (image: ImageItem) => {
+  if (image.collected && image.collectId) {
+    const res = await api.cancelCollectImage({
+      ids: [image.collectId]
+    })
+    if (res.success) {
+      image.collectId = ''
+      image.collected = false
+    } else {
+      toast.add({ severity: 'error', summary: res.content, life: 3000 })
+    }
+  } else {
+    const res = await api.collectImage({
+      code: image.code
+    })
+    if (res.success) {
+      image.collectId = res.data.id
+      image.collected = true
+    } else {
+      toast.add({ severity: 'error', summary: res.content, life: 3000 })
+    }
+  }
 }
 
 // 下载图片
