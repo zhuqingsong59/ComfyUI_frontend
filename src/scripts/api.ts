@@ -673,11 +673,12 @@ export class ComfyApi extends EventTarget {
   /**
    * 删除图库图片
    * @param {Object} params 包含图片code的对象
-   * @param {numbe} params.id 代码列表
+   *@param {Array<number>} params.ids 代码列表
+   *@param {number} params.mediaType 媒体类型
    * @returns {Promise<any>} 返回代码列表的url
    */
-  async deleteGalleryImage(params: { id: number }): Promise<any> {
-    const route = '/image/library/delete';
+  async deleteGalleryImage(params: { ids: Array<number>, mediaType: number }): Promise<any> {
+    const route = '/comfyflow/delFile';
     const url = this.dabiURL(route);
     try {
       const response = await axios.post(

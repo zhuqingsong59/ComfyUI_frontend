@@ -104,9 +104,17 @@ onMounted(async () => {
   await getGalleryImageList()
 })
 // 删除图片
-const deleteImage = (image: ImageItem) => {
-  const index = galleryImageList.value.findIndex((item) => item === image)
-  galleryImageList.value.splice(index, 1)
+const deleteImage = async (image: ImageItem) => {
+  const res = await api.deleteGalleryImage({
+    ids: [image.id],
+    mediaType: 10
+  })
+  if (res.success) {
+    const index = galleryImageList.value.findIndex((item) => item === image)
+    galleryImageList.value.splice(index, 1)
+  } else {
+    toast.add({ severity: 'error', summary: res.content, life: 3000 })
+  }
 }
 // 收藏/取消收藏图片
 const collectImage = async (image: ImageItem) => {
