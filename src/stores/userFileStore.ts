@@ -157,12 +157,13 @@ export class UserFile {
   async delete(): Promise<void> {
     if (this.isTemporary) return
 
-    const resp = await api.deleteUserData(this.path)
-    if (resp.status !== 204) {
-      throw new Error(
-        `Failed to delete file '${this.path}': ${resp.status} ${resp.statusText}`
-      )
-    }
+    // const resp = await api.deleteUserData(this.path)
+    // if (resp.status !== 204) {
+    //   throw new Error(
+    //     `Failed to delete file '${this.path}': ${resp.status} ${resp.statusText}`
+    //   )
+    // }
+    await api.deleteWorkflow(this.id)
   }
 
   async rename(newPath: string): Promise<UserFile> {

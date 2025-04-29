@@ -1234,6 +1234,36 @@ export class ComfyApi extends EventTarget {
       throw error;
     }
   }
+
+  /**
+   * 删除工作流
+   * @param {string} id 工作流ID
+   * @returns {Promise<any>} 删除结果
+   */
+  async deleteWorkflow(id: string): Promise<any> {
+    const url = this.apiURL('/dapi/delFlow');
+    try {
+      const response = await axios.post(
+        url,
+        { id },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Dabi-token': getToken() || ''
+          }
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error(`删除工作流失败: ${response.status} ${response.statusText}`);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('删除工作流失败:', error);
+      throw error;
+    }
+  }
 }
 
 export const api = new ComfyApi()
