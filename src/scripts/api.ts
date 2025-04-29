@@ -234,7 +234,7 @@ export class ComfyApi extends EventTarget {
   }
 
   internalURL(route: string): string {
-    return this.api_base + (process.env.NODE_ENV === 'development' ? '/internal' :'/internal/internal') + route
+    return this.api_base + (process.env.NODE_ENV === 'development' ? '/internal' : '/internal/internal') + route
   }
 
   apiURL(route: string): string {
@@ -607,16 +607,16 @@ export class ComfyApi extends EventTarget {
     }
   }
 
-   /**
-   * 收藏图片
-   * @param {Object} params 包含图片code的对象
-   * @param {string} params.code 图片code
-   * @returns {Promise<any>} 返回代码列表的url
-   */
-  async collectImage(params: {code:string}): Promise<any> {
+  /**
+  * 收藏图片
+  * @param {Object} params 包含图片code的对象
+  * @param {string} params.code 图片code
+  * @returns {Promise<any>} 返回代码列表的url
+  */
+  async collectImage(params: { code: string }): Promise<any> {
     const route = '/image/library/collect';
     const url = this.dabiURL(route);
-      try {
+    try {
       const response = await axios.post(
         url,
         params,
@@ -638,16 +638,16 @@ export class ComfyApi extends EventTarget {
       throw error;
     }
   }
-   /**
-   * 取消收藏图片
-   * @param {Object} params 包含图片code的对象
-   * @param {Array<string>} params.ids 代码列表
-   * @returns {Promise<any>} 返回代码列表的url
-   */
-  async cancelCollectImage(params: {ids:Array<string>}): Promise<any> {
+  /**
+  * 取消收藏图片
+  * @param {Object} params 包含图片code的对象
+  * @param {Array<string>} params.ids 代码列表
+  * @returns {Promise<any>} 返回代码列表的url
+  */
+  async cancelCollectImage(params: { ids: Array<string> }): Promise<any> {
     const route = '/image/library/delete';
     const url = this.dabiURL(route);
-      try {
+    try {
       const response = await axios.post(
         url,
         params,
@@ -666,6 +666,38 @@ export class ComfyApi extends EventTarget {
       return response.data;
     } catch (error) {
       console.error('Error cancel collect image:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 删除图库图片
+   * @param {Object} params 包含图片code的对象
+   * @param {numbe} params.id 代码列表
+   * @returns {Promise<any>} 返回代码列表的url
+   */
+  async deleteGalleryImage(params: { id: number }): Promise<any> {
+    const route = '/image/library/delete';
+    const url = this.dabiURL(route);
+    try {
+      const response = await axios.post(
+        url,
+        params,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Dabi-token': getToken() || ''
+          }
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error(`Failed to delete gallery image: ${response.statusText}`);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Error delete gallery image:', error);
       throw error;
     }
   }
