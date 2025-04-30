@@ -251,7 +251,7 @@ export class ComfyApi extends EventTarget {
   }
 
   dabiURL(route: string): string {
-    return import.meta.env.VITE_DABI_URL || '/dabi/test' + route
+    return (import.meta.env.VITE_DABI_URL || '/dabi/test') + route
   }
 
   fileURL(route: string): string {
