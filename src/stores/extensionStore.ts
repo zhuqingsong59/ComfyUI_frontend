@@ -55,7 +55,10 @@ export const useExtensionStore = defineStore('extension', () => {
     }
 
     if (extensionByName.value[extension.name]) {
-      throw new Error(`Extension named '${extension.name}' already registered.`)
+      console.log(
+        `-------------------Extension named '${extension.name}' already registered.--------------`
+      )
+      // throw new Error(`Extension named '${extension.name}' already registered.`)
     }
 
     if (disabledExtensionNames.value.has(extension.name)) {
