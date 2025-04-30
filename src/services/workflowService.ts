@@ -131,9 +131,36 @@ export const useWorkflowService = () => {
   }
   /**
    * Load the customized workflow
+   * @param type The type of workflow to load
+   * @param loraName The name of the LoRA model to use
+   * @param modelName The name of the base model to use
    */
-  const loadCustomizedWorkflow = async (type: number) => {
-    await app.loadGraphData(getGraphByType(type))
+  const loadCustomizedWorkflow = async (
+    type: number,
+    loraName?: string,
+    modelName?: string
+  ) => {
+    const graph = getGraphByType(type)
+
+    // 更新模型名称
+    if (modelName) {
+      const modelNode = graph.nodes.find(
+        (node) => node.type === 'CheckpointLoaderSimple'
+      )
+      if (modelNode) {
+        modelNode.widgets_values = [modelName]
+      }
+    }
+
+    // 更新 LoRA 名称
+    if (loraName) {
+      const loraNode = graph.nodes.find((node) => node.type === 'LoraLoader')
+      if (loraNode) {
+        loraNode.widgets_values = [loraName, 1, 1]
+      }
+    }
+
+    await app.loadGraphData(graph)
   }
 
   /**

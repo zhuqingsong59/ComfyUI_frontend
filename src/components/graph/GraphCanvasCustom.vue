@@ -291,7 +291,11 @@ onMounted(async () => {
   // Restore workflow and workflow tabs state from storage
   const { isFlux, modelName, loraName } = route.query
   if (isFlux && modelName && loraName) {
-    await useWorkflowService().loadCustomizedWorkflow(Number(isFlux))
+    await useWorkflowService().loadCustomizedWorkflow(
+      Number(isFlux),
+      String(loraName),
+      String(modelName)
+    )
   } else {
     await workflowPersistence.restorePreviousWorkflow()
     workflowPersistence.restoreWorkflowTabsState()
