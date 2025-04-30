@@ -41,6 +41,7 @@
 <script setup lang="ts">
 import type { LGraphNode } from '@comfyorg/litegraph'
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
 
 import LiteGraphCanvasSplitterOverlay from '@/components/LiteGraphCanvasSplitterOverlayCustom.vue'
 import BottomPanel from '@/components/bottomPanel/BottomPanel.vue'
@@ -79,6 +80,8 @@ import { useNodeDefStore } from '@/stores/nodeDefStore'
 import { useSettingStore } from '@/stores/settingStore'
 import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
 import { useWorkspaceStore } from '@/stores/workspaceStore'
+
+const route = useRoute()
 
 const emit = defineEmits(['ready'])
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -285,10 +288,14 @@ onMounted(async () => {
   colorPaletteStore.customPalettes = settingStore.get(
     'Comfy.CustomColorPalettes'
   )
-
   // Restore workflow and workflow tabs state from storage
-  await workflowPersistence.restorePreviousWorkflow()
-  workflowPersistence.restoreWorkflowTabsState()
+  const { isFlux, modelName, loraName } = route.query
+  if (isFlux && modelName && loraName) {
+    await useWorkflowService().loadCustomizedWorkflow(Number(isFlux))
+  } else {
+    await workflowPersistence.restorePreviousWorkflow()
+    workflowPersistence.restoreWorkflowTabsState()
+  }
 
   // Start watching for locale change after the initial value is loaded.
   watch(

@@ -5,7 +5,11 @@ import { toRaw } from 'vue'
 import { t } from '@/i18n'
 import { ComfyWorkflowJSON } from '@/schemas/comfyWorkflowSchema'
 import { app } from '@/scripts/app'
-import { blankGraph, defaultGraph } from '@/scripts/defaultGraph'
+import {
+  blankGraph,
+  defaultGraph,
+  getGraphByType
+} from '@/scripts/defaultGraph'
 import { downloadBlob } from '@/scripts/utils'
 import { useSettingStore } from '@/stores/settingStore'
 import { useToastStore } from '@/stores/toastStore'
@@ -124,6 +128,12 @@ export const useWorkflowService = () => {
    */
   const loadDefaultWorkflow = async () => {
     await app.loadGraphData(defaultGraph)
+  }
+  /**
+   * Load the customized workflow
+   */
+  const loadCustomizedWorkflow = async (type: number) => {
+    await app.loadGraphData(getGraphByType(type))
   }
 
   /**
@@ -378,6 +388,7 @@ export const useWorkflowService = () => {
     saveWorkflowAs,
     saveWorkflow,
     loadDefaultWorkflow,
+    loadCustomizedWorkflow,
     loadBlankWorkflow,
     reloadCurrentWorkflow,
     openWorkflow,
