@@ -1,5 +1,4 @@
-
-npm run build
+npm run test
 cp -r dist/ comfyui-frontend/
 tar -zcvf comfyui.tar.gz comfyui-frontend/
 scp comfyui.tar.gz dabi:

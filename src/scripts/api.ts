@@ -239,12 +239,11 @@ export class ComfyApi extends EventTarget {
   }
 
   apiURL(route: string): string {
-    // return this.api_base + (process.env.NODE_ENV === 'development' ? '/api' : '/api/api') + route
-    return this.api_base +  '/api' + route
+    return this.api_base + '/api' + route
   }
 
   dabiURL(route: string): string {
-    return '/dabi/test' + route
+    return import.meta.env.VITE_DABI_URL || '/dabi/test' + route
   }
 
   fileURL(route: string): string {

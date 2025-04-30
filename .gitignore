@@ -42,7 +42,7 @@ tests-ui/workflows/examples
 /playwright/.cache/
 browser_tests/**/*-win32.png
 
-.env
+.env*
 
 dist.zip
 
