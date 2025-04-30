@@ -12,8 +12,8 @@ import { useExecutionStore } from '@/stores/executionStore'
 import { useSettingStore } from '@/stores/settingStore'
 import { useWorkflowStore } from '@/stores/workflowStore'
 
-const DEFAULT_TITLE = 'ComfyUI'
-const TITLE_SUFFIX = ' - ComfyUI'
+const DEFAULT_TITLE = '达笔'
+const TITLE_SUFFIX = ' - 达笔'
 
 const executionStore = useExecutionStore()
 const executionText = computed(() =>
