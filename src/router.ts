@@ -6,6 +6,7 @@ import {
   createWebHistory
 } from 'vue-router'
 
+import { api } from '@/scripts/api'
 import LayoutDefault from '@/views/layouts/LayoutDefault.vue'
 
 import { useUserStore } from './stores/userStore'
@@ -44,6 +45,14 @@ const router = createRouter({
           // component: () => import('@/views/GraphView.vue'),
           component: () => import('@/views/GraphViewCustom.vue'),
           beforeEnter: async (_to, _from, next) => {
+            const res = await api.getServer()
+            if (res.success) {
+              api.setApiBase(res.data)
+            } else {
+              next(false)
+              window.location.href = window.location.origin + '/login'
+              return
+            }
             const userStore = useUserStore()
             await userStore.initialize()
             if (userStore.needsLogin) {

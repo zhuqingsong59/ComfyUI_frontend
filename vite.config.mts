@@ -30,15 +30,15 @@ export default defineConfig({
       '/internal': {
         target: DEV_SERVER_COMFYUI_URL
       },
-      '/comfyuiServer': {
+      '/comfyuiServer1': {
         target: DEV_SERVER_COMFYUI_URL,
         bypass: (req, res, _options) => {
-          if (req.url === '/comfyuiServer/api/extensions') {
+          if (req.url === '/comfyuiServer1/api/extensions') {
             res.end(JSON.stringify([]))
           }
           return null
         },
-        rewrite: (path) => path.replace('/comfyuiServer/', '/')
+        rewrite: (path) => path.replace('/comfyuiServer1/', '/')
       },
       '/api': {
         target: DEV_SERVER_COMFYUI_URL,

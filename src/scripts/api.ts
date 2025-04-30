@@ -234,6 +234,14 @@ export class ComfyApi extends EventTarget {
     this.initialClientId = sessionStorage.getItem('clientId')
   }
 
+  /**
+   * 设置 API 基础路径
+   * @param base 新的 API 基础路径
+   */
+  setApiBase(base: string): void {
+    this.api_base = this.api_base + base
+  }
+
   internalURL(route: string): string {
     return this.api_base + (process.env.NODE_ENV === 'development' ? '/internal' : '/internal/internal') + route
   }
@@ -1258,6 +1266,36 @@ export class ComfyApi extends EventTarget {
       throw error;
     }
   }
+  /**
+   * 获取可用服务（POST 请求，使用 axios）
+   * @returns {Promise<any>} 返回分页数据
+   */
+  async getServer(): Promise<any> {
+    const route = '/comfyflow/getServer';
+    const url = this.dabiURL(route);
+    try {
+      const response = await axios.post(
+        url,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Dabi-token': getToken() || ''
+          }
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error(`Failed to get server: ${response.statusText}`);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get server:', error);
+      throw error;
+    }
+  }
+
 }
 
 export const api = new ComfyApi()
