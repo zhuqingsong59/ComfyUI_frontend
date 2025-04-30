@@ -222,7 +222,8 @@ export class ComfyApi extends EventTarget {
     super()
     this.user = ''
     this.api_host = location.host
-    this.api_base = location.pathname.split('/').slice(0, -1).join('/')
+    // this.api_base = location.pathname.split('/').slice(0, -1).join('/')
+    this.api_base = '/comfyuiServer'
     console.log('this.api_base: ', this.api_base);
     console.log('Running on', this.api_host)
     this.axiosOption = {
@@ -238,11 +239,12 @@ export class ComfyApi extends EventTarget {
   }
 
   apiURL(route: string): string {
-    return this.api_base + (process.env.NODE_ENV === 'development' ? '/api' : '/api/api') + route
+    // return this.api_base + (process.env.NODE_ENV === 'development' ? '/api' : '/api/api') + route
+    return this.api_base +  '/api' + route
   }
 
   dabiURL(route: string): string {
-    return 'dabi/test' + route
+    return '/dabi/test' + route
   }
 
   fileURL(route: string): string {

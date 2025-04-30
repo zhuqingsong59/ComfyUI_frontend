@@ -30,7 +30,16 @@ export default defineConfig({
       '/internal': {
         target: DEV_SERVER_COMFYUI_URL
       },
-
+      '/comfyuiServer': {
+        target: DEV_SERVER_COMFYUI_URL,
+        bypass: (req, res, _options) => {
+          if (req.url === '/comfyuiServer/api/extensions') {
+            res.end(JSON.stringify([]))
+          }
+          return null
+        },
+        rewrite: (path) => path.replace('/comfyuiServer/', '/')
+      },
       '/api': {
         target: DEV_SERVER_COMFYUI_URL,
         // Return empty array for extensions API as these modules
