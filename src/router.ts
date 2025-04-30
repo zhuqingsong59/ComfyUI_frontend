@@ -50,7 +50,7 @@ const router = createRouter({
               api.setApiBase(res.data)
             } else {
               next(false)
-              window.location.href = window.location.origin + '/login'
+              window.location.href = 'https://bistatic.xxzc.info/login'
               return
             }
             const userStore = useUserStore()

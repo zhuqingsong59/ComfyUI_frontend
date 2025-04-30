@@ -258,7 +258,7 @@ onMounted(async () => {
       )
       localStorage.removeItem('Comfy.userId')
       localStorage.removeItem('Comfy.userName')
-      window.location.href = window.location.origin + '/login'
+      window.location.href = 'https://bistatic.xxzc.info/login'
     } else {
       throw error
     }
