@@ -271,14 +271,7 @@ export class ComfyApi extends EventTarget {
       options.headers['Comfy-User'] = this.user
       options.headers['Dabi-token'] = token
     }
-    return fetch(this.apiURL(route), options).then((response) => {
-      if (response.status === 401) {
-        // 跳转到登录页面
-        window.location.href = '/login'
-        throw new UnauthorizedError('Unauthorized')
-      }
-      return response
-    })
+    return fetch(this.apiURL(route), options)
   }
 
   addEventListener<TEvent extends keyof ApiEvents>(

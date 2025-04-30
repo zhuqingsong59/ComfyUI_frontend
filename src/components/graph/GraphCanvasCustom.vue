@@ -255,7 +255,7 @@ onMounted(async () => {
       )
       localStorage.removeItem('Comfy.userId')
       localStorage.removeItem('Comfy.userName')
-      window.location.reload()
+      window.location.href = window.location.origin + '/login'
     } else {
       throw error
     }

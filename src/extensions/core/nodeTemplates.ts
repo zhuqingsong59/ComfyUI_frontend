@@ -89,16 +89,16 @@ class ManageTemplates extends ComfyDialog {
   }
 
   async load() {
-    let templates = []
-    const res = await api.getUserData(file)
-    if (res.status === 200) {
-      try {
-        templates = await res.json()
-      } catch (error) {}
-    } else if (res.status !== 404) {
-      console.error(res.status + ' ' + res.statusText)
-    }
-    return templates ?? []
+    // let templates = []
+    // const res = await api.getUserData(file)
+    // if (res.status === 200) {
+    //   try {
+    //     templates = await res.json()
+    //   } catch (error) {}
+    // } else if (res.status !== 404) {
+    //   console.error(res.status + ' ' + res.statusText)
+    // }
+    return []
   }
 
   async store() {
