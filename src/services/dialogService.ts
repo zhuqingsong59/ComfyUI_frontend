@@ -199,9 +199,7 @@ export const useDialogService = () => {
     } =
       error instanceof Error
         ? parseError(error)
-        : {
-            errorMessage: String(error)
-          }
+        : { errorMessage: String(error) }
 
     const props: InstanceType<typeof ErrorDialogContent>['$props'] = {
       error: {
@@ -305,6 +303,7 @@ export const useDialogService = () => {
   async function confirm({
     title,
     message,
+    customClass,
     type = 'default',
     itemList = [],
     hint
@@ -313,6 +312,8 @@ export const useDialogService = () => {
     title: string
     /** The main message body */
     message: string
+    /** Custom class for the dialog */
+    customClass?: string
     /** Pre-configured dialog type */
     type?: ConfirmationDialogType
     /** Displayed as an unordered list immediately below the message body */
@@ -323,6 +324,7 @@ export const useDialogService = () => {
       const options: ShowDialogOptions = {
         key: 'global-prompt',
         title,
+        customClass,
         component: ConfirmationDialogContent,
         props: {
           message,

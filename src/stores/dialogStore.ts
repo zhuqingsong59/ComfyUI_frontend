@@ -35,6 +35,7 @@ interface DialogInstance {
   key: string
   visible: boolean
   title?: string
+  customClass?: string
   headerComponent?: Component
   component: Component
   contentProps: Record<string, any>
@@ -45,6 +46,7 @@ interface DialogInstance {
 export interface ShowDialogOptions {
   key?: string
   title?: string
+  customClass?: string
   headerComponent?: Component
   footerComponent?: Component
   component: Component
@@ -80,6 +82,7 @@ export const useDialogStore = defineStore('dialog', () => {
   function createDialog(options: {
     key: string
     title?: string
+    customClass?: string
     headerComponent?: Component
     footerComponent?: Component
     component: Component
@@ -94,6 +97,7 @@ export const useDialogStore = defineStore('dialog', () => {
       key: options.key,
       visible: true,
       title: options.title,
+      customClass: options.customClass,
       headerComponent: options.headerComponent
         ? markRaw(options.headerComponent)
         : undefined,

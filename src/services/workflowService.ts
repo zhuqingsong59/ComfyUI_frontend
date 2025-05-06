@@ -268,9 +268,13 @@ export const useWorkflowService = () => {
 
     if (!confirmed) {
       confirmed = await dialogService.confirm({
-        title: t('sideToolbar.workflowTab.confirmDeleteTitle'),
+        // title: t('sideToolbar.workflowTab.confirmDeleteTitle'),
+        title: '提示',
         type: 'delete',
-        message: t('sideToolbar.workflowTab.confirmDelete'),
+        hint: '删除后将无法恢复，确定删除吗',
+        customClass: 'workflow-delete-dialog',
+        message: '',
+        // message: t('sideToolbar.workflowTab.confirmDelete'),
         itemList: [workflow.path]
       })
       if (!confirmed) return false

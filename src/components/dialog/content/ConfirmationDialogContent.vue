@@ -16,9 +16,10 @@
       {{ hint }}
     </Message>
     <div class="flex gap-4 justify-end">
+      <!-- icon="pi pi-undo" -->
       <Button
         :label="$t('g.cancel')"
-        icon="pi pi-undo"
+        :icon="type === 'delete' ? '' : 'pi pi-undo'"
         severity="secondary"
         autofocus
         @click="onCancel"
@@ -30,11 +31,12 @@
         icon="pi pi-check"
         @click="onConfirm"
       />
+      <!-- :label="$t('g.delete')" -->
+      <!-- icon="pi pi-trash" -->
       <Button
         v-else-if="type === 'delete'"
-        :label="$t('g.delete')"
+        label="确定"
         severity="danger"
-        icon="pi pi-trash"
         @click="onConfirm"
       />
       <Button
