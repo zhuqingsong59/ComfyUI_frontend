@@ -73,7 +73,7 @@ interface ImageItem {
 }
 
 let pageNo = 1
-let pageSize = 100
+let pageSize = 1000
 const codeMap: { [key: string]: string } = {}
 const galleryImageList = ref<ImageItem[]>([])
 const getGalleryImageList = async () => {
